@@ -274,71 +274,50 @@ with col_right:
             selected = selected.iloc[0]
             
             # Kapat butonu
-            col_close, _ = st.columns([1, 10])
-            with col_close:
-                if st.button("✖ Kapat"):
-                    st.session_state.show_details = False
-                    st.session_state.selected_id = None
-                    st.rerun()
+            if st.button("✖ Kapat"):
+                st.session_state.show_details = False
+                st.session_state.selected_id = None
+                st.rerun()
             
             # Detay içeriği
-            impact_badges = {
-                'Yüksek': '<span style="background: #fee2e2; color: #991b1b; padding: 4px 12px; border-radius: 9999px; font-size: 14px; font-weight: 600;">🔴 Yüksek Etki</span>',
-                'Orta': '<span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 9999px; font-size: 14px; font-weight: 600;">🟡 Orta Etki</span>',
-                'Düşük': '<span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 9999px; font-size: 14px; font-weight: 600;">🟢 Düşük Etki</span>'
-            }
+            # Etki seviyesi badge
+            if selected['etkiSeviyesi'] == 'Yüksek':
+                st.error(f"🔴 Yüksek Etki Seviyesi")
+            elif selected['etkiSeviyesi'] == 'Orta':
+                st.warning(f"🟡 Orta Etki Seviyesi")
+            else:
+                st.success(f"🟢 Düşük Etki Seviyesi")
             
-            st.markdown(f"""
-            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                {impact_badges.get(selected['etkiSeviyesi'], '')}
-                <h2 style="margin-top: 1rem; color: #111827;">{selected['tesisAdi']}</h2>
-                <p style="color: #6b7280;">📍 {selected['konum']}, {selected['ilce']}/{selected['il']}</p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0;">
-                    <div style="background: #f9fafb; padding: 1rem; border-radius: 8px;">
-                        <p style="color: #6b7280; font-size: 0.875rem; margin: 0;">Tarih</p>
-                        <p style="font-size: 1.25rem; font-weight: bold; margin: 4px 0;">{selected['tarih']}</p>
-                    </div>
-                    <div style="background: #f9fafb; padding: 1rem; border-radius: 8px;">
-                        <p style="color: #6b7280; font-size: 0.875rem; margin: 0;">Olay Türü</p>
-                        <p style="font-size: 1.25rem; font-weight: bold; margin: 4px 0;">{selected['olayTuru']}</p>
-                    </div>
-                    <div style="background: #f9fafb; padding: 1rem; border-radius: 8px;">
-                        <p style="color: #6b7280; font-size: 0.875rem; margin: 0;">Sektör</p>
-                        <p style="font-size: 1.25rem; font-weight: bold; margin: 4px 0;">{selected['sektor']}</p>
-                    </div>
-                    <div style="background: #f9fafb; padding: 1rem; border-radius: 8px;">
-                        <p style="color: #6b7280; font-size: 0.875rem; margin: 0;">Doğruluk Oranı</p>
-                        <div style="margin-top: 8px;">
-                            <div style="background: #e5e7eb; border-radius: 9999px; height: 8px;">
-                                <div style="background: #6366f1; width: {selected['dogrulukOrani']}%; height: 100%; border-radius: 9999px;"></div>
-                            </div>
-                            <p style="text-align: right; font-size: 0.75rem; margin: 4px 0;">%{selected['dogrulukOrani']}</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="background: #eff6ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-                    <h4 style="color: #1e40af;">📝 Olay Özeti</h4>
-                    <p style="color: #1f2937;">{selected['ozet']}</p>
-                </div>
-                
-                <div>
-                    <h4 style="color: #111827;">💥 Direkt Hasar Etkisi</h4>
-                    <p style="color: #4b5563;">{selected['etki']}</p>
-                </div>
-                
-                <div style="margin-top: 1.5rem;">
-                    <h4 style="color: #111827;">📰 Haber Alıntıları</h4>
-                    <ul style="color: #4b5563;">
-                        {"".join([f"<li>{haber}</li>" for haber in selected['haberler']])}
-                    </ul>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            # Başlık ve konum
+            st.markdown(f"## {selected['tesisAdi']}")
+            st.markdown(f"📍 **Konum:** {selected['konum']}, {selected['ilce']}/{selected['il']}")
+            
+            # Bilgi kartları
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Tarih", selected['tarih'])
+                st.metric("Sektör", selected['sektor'])
+            with col2:
+                st.metric("Olay Türü", selected['olayTuru'])
+                st.metric("Doğruluk Oranı", f"%{selected['dogrulukOrani']}")
+            
+            # Doğruluk oranı progress bar
+            st.progress(selected['dogrulukOrani'] / 100)
+            
+            # Olay özeti
+            st.info(f"**📝 Olay Özeti**\n\n{selected['ozet']}")
+            
+            # Hasar etkisi
+            st.markdown("### 💥 Direkt Hasar Etkisi")
+            st.write(selected['etki'])
+            
+            # Haber alıntıları
+            st.markdown("### 📰 Haber Alıntıları")
+            for haber in selected['haberler']:
+                st.write(f"• {haber}")
             
             # Detay haritası
-            st.markdown("#### 📍 Konum Detayı")
+            st.markdown("### 📍 Konum Detayı")
             detail_map = create_map(pd.DataFrame([selected]), selected['id'])
             folium_static(detail_map, height=400)
     
