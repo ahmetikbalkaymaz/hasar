@@ -1,10 +1,7 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import folium
-from streamlit_folium import folium_static
-from datetime import datetime
+import json
 
 # Sayfa yapılandırması
 st.set_page_config(
@@ -14,397 +11,408 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS stilleri
-st.markdown("""
-<style>
-    .main {
-        padding: 0;
-    }
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 0;
-    }
-    div[data-testid="stSidebarNav"] {
-        display: none;
-    }
-    .incident-item {
-        padding: 12px;
-        border-left: 4px solid;
-        background: white;
-        margin-bottom: 8px;
-        border-radius: 0 6px 6px 0;
-        cursor: pointer;
-        transition: all 0.2s;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .incident-item:hover {
-        background-color: #eef2ff;
-        transform: translateX(-2px);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    }
-    .incident-high { border-left-color: #dc3545; }
-    .incident-medium { border-left-color: #ffc107; }
-    .incident-low { border-left-color: #28a745; }
-    .incident-active {
-        background-color: #eef2ff !important;
-        border-left-color: #4f46e5 !important;
-    }
-    .stButton > button {
-        text-align: left;
-        width: 100%;
-        background: transparent;
-        border: none;
-        padding: 0;
-        font-weight: normal;
-    }
-    .metric-card {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        text-align: center;
-        height: 100%;
-    }
-</style>
-""", unsafe_allow_html=True)
+# Veri hazırlama
+incidents_data = [
+    {"id": 63, "tarih": "28.09.2025", "il": "Erzurum", "ilce": "Aziziye", "konum": "Erzurum 1. OSB", "tesisAdi": "Şahika Boya Üretim Tesisleri", "sektor": "Kimya / Boya", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 39.9510, "lng": 41.1920, "ozet": "Boya üretim tesisinin depo bölümünde çıkan yangın, bitişikte bulunan terlik hammaddesi (EVA) deposuna da sıçradı. İki tesis de büyük hasar gördü.", "etki": "Boya ve kimya tesisleri, solvent gibi yanıcı ve parlayıcı maddeler nedeniyle yangın riski en yüksek sektörlerdendir.", "haberler": ["AA: 'Erzurum OSB'de boya fabrikasında yangın.'", "Erzurum Günebakış: 'Yangın yandaki depoya da sıçradı.'"]},
+    {"id": 62, "tarih": "28.09.2025", "il": "Adana", "ilce": "Yüreğir", "konum": "Zağarlı Mahallesi", "tesisAdi": "FBY Enerji Üretim (Yüreğir BES)", "sektor": "Enerji / Biyokütle", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 90, "lat": 36.9535, "lng": 35.4182, "ozet": "Tarımsal atıklardan enerji üreten biyokütle santralinin açık alandaki atık depolama sahasında büyük bir yangın çıktı.", "etki": "Santralin yakıt stoğu önemli ölçüde yanmıştır.", "haberler": ["İHA: 'Adana'da biyokütle enerji santralinde yangın.'"]},
+    {"id": 61, "tarih": "28.09.2025", "il": "Karabük", "ilce": "Safranbolu", "konum": "Safranbolu Sanayi Sitesi", "tesisAdi": "Ahmet Sevigen Kereste Atölyesi", "sektor": "Kereste", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 41.2580, "lng": 32.6715, "ozet": "Kereste atölyesinde yangın çıktı.", "etki": "Atölye için total hasar.", "haberler": ["BirGün: 'Safranbolu sanayi sitesinde kereste atölyesi yandı.'"]},
+    {"id": 60, "tarih": "29.09.2025", "il": "Karaman", "ilce": "Merkez", "konum": "Karaman OSB", "tesisAdi": "Sosyete Un Gıda Sanayi", "sektor": "Gıda / Un", "olayTuru": "Yangın", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "B", "dogrulukOrani": 75, "lat": 37.2050, "lng": 33.2590, "ozet": "Un fabrikasının atık depolama alanında yangın çıktı.", "etki": "Düşük şiddetli hasar.", "haberler": ["Karamandan.com: 'OSB'de fabrikanın hurdalığında yangın paniği.'"]},
+    {"id": 59, "tarih": "25.09.2025", "il": "Zonguldak", "ilce": "Kilimli", "konum": "Çatalağzı, ZETES Santrali", "tesisAdi": "Eren Enerji Termik Santrali", "sektor": "Enerji / Termik Santral", "olayTuru": "Kazan/Boiler Patlağı", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 96, "lat": 41.5167, "lng": 31.9, "ozet": "Termik santralin buhar hattında patlama sonucu 3 işçi ağır yaralandı.", "etki": "Ciddi iş durması ve kar kaybı.", "haberler": ["Z Haber: 'Eren Enerji'de buhar kazanı patladı.'"]}
+]
 
-# Session state
-if 'selected_id' not in st.session_state:
-    st.session_state.selected_id = None
-if 'show_details' not in st.session_state:
-    st.session_state.show_details = False
-
-# Veri yükleme
-@st.cache_data
-def load_data():
-    data = [
-        {
-            "id": 1, "tarih": "28.09.2025", "il": "Erzurum", "ilce": "Aziziye", 
-            "konum": "Erzurum 1. OSB", "tesisAdi": "Şahika Boya Üretim Tesisleri", 
-            "sektor": "Kimya / Boya", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek",
-            "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 39.9510, "lng": 41.1920,
-            "ozet": "Boya üretim tesisinin depo bölümünde çıkan yangın, bitişikte bulunan terlik hammaddesi deposuna da sıçradı. İki tesis de büyük hasar gördü.",
-            "etki": "İki farklı riskin (kimyasal ve plastik) birleştiği büyük ve komplike bir hasar dosyasıdır. Yangının komşu bir tesise sıçraması, Üçüncü Şahıs Sorumluluk poliçesini doğrudan devreye sokar.",
-            "haberler": ["AA: 'Erzurum OSB'de boya fabrikasında yangın.'", "Erzurum Günebakış: 'Yangın yandaki depoya da sıçradı.'"]
-        },
-        {
-            "id": 2, "tarih": "28.09.2025", "il": "Adana", "ilce": "Yüreğir",
-            "konum": "Zağarlı Mahallesi", "tesisAdi": "FBY Enerji Üretim (Yüreğir BES)",
-            "sektor": "Enerji / Biyokütle", "olayTuru": "Yangın", "etkiSeviyesi": "Orta",
-            "dogrulamaYontemi": "A", "dogrulukOrani": 90, "lat": 36.9535, "lng": 35.4182,
-            "ozet": "Tarımsal atıklardan enerji üreten biyokütle santralinin açık alandaki atık depolama sahasında büyük bir yangın çıktı. Yangının santralin ana ünitelerine sıçraması önlendi.",
-            "etki": "Santralin yakıt stoğu önemli ölçüde yanmıştır. Enerji üretiminde aksama yaşanması ve buna bağlı bir İş Durması hasarı oluşması kaçınılmazdır.",
-            "haberler": ["İHA: 'Adana'da biyokütle enerji santralinde yangın.'", "Habertürk: 'Santralin atık depolama alanı alev alev yandı.'"]
-        },
-        {
-            "id": 3, "tarih": "28.09.2025", "il": "Karabük", "ilce": "Safranbolu",
-            "konum": "Safranbolu Sanayi Sitesi", "tesisAdi": "Ahmet Sevigen Kereste Atölyesi",
-            "sektor": "Kereste", "olayTuru": "Yangın", "etkiSeviyesi": "Orta",
-            "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 41.2580, "lng": 32.6715,
-            "ozet": "Sanayi sitesi içerisinde faaliyet gösteren bir kereste atölyesinde, depolanan ahşap malzemelerin ve talaşların tutuşmasıyla yangın çıktı.",
-            "etki": "Kereste ve ahşap işleme tesisleri, yanıcı toz ve malzeme birikimi nedeniyle yangın frekansı en yüksek sektörler arasındadır. Atölye için total bir hasar söz konusudur.",
-            "haberler": ["BirGün: 'Safranbolu sanayi sitesinde kereste atölyesi yandı.'", "İHA: 'Yangın güçlükle kontrol altına alındı.'"]
-        },
-        {
-            "id": 4, "tarih": "25.09.2025", "il": "Zonguldak", "ilce": "Kilimli",
-            "konum": "Çatalağzı, ZETES Santrali", "tesisAdi": "Eren Enerji Termik Santrali",
-            "sektor": "Enerji / Termik Santral", "olayTuru": "Kazan/Boiler Patlağı",
-            "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 96,
-            "lat": 41.5167, "lng": 31.9,
-            "ozet": "Termik santralin ana kazanlarından birine giden yüksek basınçlı buhar hattında meydana gelen patlama sonucu 3 işçi ağır yaralandı. Üretim kısmen durduruldu.",
-            "etki": "Patlama sonucu 3 işçinin ağır yaralanması, İşveren Sorumluluk poliçesi kapsamında yüksek tutarlı tazminat taleplerini gündeme getirmektedir.",
-            "haberler": ["Z Haber: 'Eren Enerji'de buhar kazanı patladı: 3 ağır yaralı.'", "Enerji Günlüğü: 'ZETES'te üretim aksadı.'"]
-        },
-        {
-            "id": 5, "tarih": "29.09.2025", "il": "Karaman", "ilce": "Merkez",
-            "konum": "Karaman OSB", "tesisAdi": "Sosyete Un Gıda Sanayi",
-            "sektor": "Gıda / Un", "olayTuru": "Yangın", "etkiSeviyesi": "Düşük",
-            "dogrulamaYontemi": "B", "dogrulukOrani": 75, "lat": 37.2050, "lng": 33.2590,
-            "ozet": "Bir un fabrikasının üretim tesisinden ayrı, arka bölümde bulunan hurda ve atık depolama alanında yangın çıktı. Yangın, ana tesise sıçramadan söndürüldü.",
-            "etki": "Üretimi doğrudan etkilemeyen, düşük şiddetli bir hasar. Maddi hasar sınırlıdır.",
-            "haberler": ["Karamandan.com: 'OSB'de fabrikanın hurdalığında yangın paniği.'"]
+# HTML içeriği
+html_content = """
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yapay Zeka Destekli Hasar Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
         }
-    ]
-    return pd.DataFrame(data)
-
-def create_map(df, selected_id=None):
-    """Harita oluştur"""
-    if df.empty:
-        m = folium.Map(location=[39.0, 35.0], zoom_start=6, tiles='CartoDB positron')
-    else:
-        m = folium.Map(location=[39.0, 35.0], zoom_start=6, tiles='CartoDB positron')
-        
-        for _, row in df.iterrows():
-            color_map = {'Yüksek': 'red', 'Orta': 'orange', 'Düşük': 'green'}
-            color = color_map.get(row['etkiSeviyesi'], 'gray')
-            
-            # Seçili öğeyi vurgula
-            if selected_id and row['id'] == selected_id:
-                folium.CircleMarker(
-                    [row['lat'], row['lng']],
-                    radius=15,
-                    color='blue',
-                    fill=False,
-                    weight=3
-                ).add_to(m)
-            
-            icon_html = f"""
-            <div style="font-size: 20px; color: {color};">
-                <i class="fa fa-fire"></i>
+        .main-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            height: calc(100vh - 200px);
+            gap: 1rem;
+            padding: 1rem;
+        }
+        #incident-list-container {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-y: auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .incident-item {
+            padding: 0.75rem;
+            border-left: 4px solid;
+            background: white;
+            margin-bottom: 0.5rem;
+            border-radius: 0 0.375rem 0.375rem 0;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .incident-item:hover {
+            background-color: #eef2ff;
+            transform: translateX(-2px);
+        }
+        .active-item {
+            background-color: #eef2ff !important;
+            border-left-color: #4f46e5 !important;
+        }
+        #map {
+            height: 450px;
+            width: 100%;
+            border-radius: 0.75rem;
+        }
+        .chart-container {
+            height: 350px;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-white shadow-sm p-4 mb-4">
+        <div class="max-w-screen-2xl mx-auto flex items-center gap-3">
+            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Yapay Zeka Destekli Hasar Paneli</h1>
+                <p class="text-sm text-gray-500">Türkiye: Son 3 Aylık Endüstriyel & Enerji Hasarları Analizi</p>
             </div>
-            """
-            
-            folium.Marker(
-                [row['lat'], row['lng']],
-                popup=folium.Popup(f"""
-                    <b>{row['tesisAdi']}</b><br>
-                    {row['olayTuru']}<br>
-                    <i>{row['tarih']}</i>
-                """, max_width=300),
-                tooltip=row['tesisAdi'],
-                icon=folium.Icon(color=color, icon='fire', prefix='fa')
-            ).add_to(m)
-    
-    return m
-
-# Ana başlık
-st.markdown("""
-<div style="background: white; padding: 1rem 2rem; margin: -2rem -3rem 1rem -3rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <div style="display: flex; align-items: center; gap: 1rem;">
-        <span style="font-size: 2rem;">⚠️</span>
-        <div>
-            <h1 style="margin: 0; font-size: 1.5rem;">Yapay Zeka Destekli Hasar Paneli</h1>
-            <p style="margin: 0; color: #6b7280; font-size: 0.875rem;">Türkiye: Son 3 Aylık Endüstriyel & Enerji Hasarları Analizi</p>
         </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
 
-# Veri yükle
-df = load_data()
+    <div class="bg-white/80 backdrop-blur-sm p-3 shadow-md mb-4">
+        <div class="max-w-screen-2xl mx-auto flex items-center gap-2">
+            <span class="font-semibold text-gray-600">Filtreler:</span>
+            <select id="il-filter" class="p-2 border rounded-md text-sm">
+                <option value="all">Tüm İller</option>
+            </select>
+            <select id="sektor-filter" class="p-2 border rounded-md text-sm">
+                <option value="all">Tüm Sektörler</option>
+            </select>
+            <select id="olay-filter" class="p-2 border rounded-md text-sm">
+                <option value="all">Tüm Olay Türleri</option>
+            </select>
+            <select id="etki-filter" class="p-2 border rounded-md text-sm">
+                <option value="all">Tüm Etki Seviyeleri</option>
+                <option value="Yüksek">Yüksek</option>
+                <option value="Orta">Orta</option>
+                <option value="Düşük">Düşük</option>
+            </select>
+            <button id="reset-filters" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md text-sm">
+                Filtreleri Temizle
+            </button>
+            <div id="result-count" class="ml-auto text-sm font-medium text-gray-600"></div>
+        </div>
+    </div>
 
-# Filtreler
-with st.container():
-    st.markdown("**Filtreler:**")
-    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 0.5])
-    
-    with col1:
-        il_filter = st.selectbox("", ["Tüm İller"] + sorted(df['il'].unique().tolist()), key="il")
-    with col2:
-        sectors = df['sektor'].str.split(' / ').str[0].unique()
-        sektor_filter = st.selectbox("", ["Tüm Sektörler"] + sorted(sectors.tolist()), key="sektor")
-    with col3:
-        olay_filter = st.selectbox("", ["Tüm Olay Türleri"] + sorted(df['olayTuru'].unique().tolist()), key="olay")
-    with col4:
-        etki_filter = st.selectbox("", ["Tüm Etki Seviyeleri", "Yüksek", "Orta", "Düşük"], key="etki")
-    with col5:
-        if st.button("🔄 Temizle"):
-            for key in ['il', 'sektor', 'olay', 'etki']:
-                st.session_state[key] = list(st.session_state[key + '_options'])[0] if key + '_options' in st.session_state else None
-            st.rerun()
+    <div class="main-grid">
+        <aside id="incident-list-container">
+            <h2 class="text-lg font-bold mb-3 pb-2 border-b">📋 Hasar Listesi (En Yeni)</h2>
+            <div id="incident-list"></div>
+        </aside>
 
-# Filtreleme
-filtered_df = df.copy()
-if il_filter != "Tüm İller":
-    filtered_df = filtered_df[filtered_df['il'] == il_filter]
-if sektor_filter != "Tüm Sektörler":
-    filtered_df = filtered_df[filtered_df['sektor'].str.startswith(sektor_filter)]
-if olay_filter != "Tüm Olay Türleri":
-    filtered_df = filtered_df[filtered_df['olayTuru'] == olay_filter]
-if etki_filter != "Tüm Etki Seviyeleri":
-    filtered_df = filtered_df[filtered_df['etkiSeviyesi'] == etki_filter]
+        <div id="main-content-area">
+            <div id="details-panel" class="hidden bg-white p-6 rounded-lg shadow-lg"></div>
+            <div id="analysis-panel">
+                <div class="bg-white rounded-lg shadow-lg p-4 mb-4">
+                    <h3 class="font-bold text-gray-700 text-lg mb-2">🗺️ Hasar Konumları Haritası</h3>
+                    <div id="map"></div>
+                </div>
+                <div class="grid grid-cols-4 gap-4 mb-4" id="metric-cards"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white rounded-lg shadow-lg p-4">
+                        <h3 class="font-semibold text-center mb-2 text-gray-600">Sektörlere Göre Hasar</h3>
+                        <div class="chart-container">
+                            <canvas id="sektorChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-4">
+                        <h3 class="font-semibold text-center mb-2 text-gray-600">Etki Seviyesi Dağılımı</h3>
+                        <div class="chart-container">
+                            <canvas id="etkiChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-st.info(f"📊 {len(filtered_df)} sonuç bulundu.")
+    <script>
+        const incidentsData = """ + json.dumps(incidents_data) + """;
+        let map, currentFilteredData = incidentsData;
+        let currentIncident = null;
+        
+        function init() {
+            populateFilters();
+            initMap();
+            renderAll(incidentsData);
+            addEventListeners();
+        }
 
-# Ana içerik - 2 kolon
-col_left, col_right = st.columns([1, 3])
+        function populateFilters() {
+            const iller = [...new Set(incidentsData.map(item => item.il))].sort();
+            const sektorler = [...new Set(incidentsData.map(item => item.sektor.split(' / ')[0]))].sort();
+            const olaylar = [...new Set(incidentsData.map(item => item.olayTuru))].sort();
+            
+            iller.forEach(il => {
+                document.getElementById('il-filter').innerHTML += `<option value="${il}">${il}</option>`;
+            });
+            sektorler.forEach(sektor => {
+                document.getElementById('sektor-filter').innerHTML += `<option value="${sektor}">${sektor}</option>`;
+            });
+            olaylar.forEach(olay => {
+                document.getElementById('olay-filter').innerHTML += `<option value="${olay}">${olay}</option>`;
+            });
+        }
 
-# Sol panel - Liste
-with col_left:
-    st.markdown("### 📋 Hasar Listesi (En Yeni)")
-    
-    if filtered_df.empty:
-        st.write("Filtre kriterlerine uygun sonuç bulunamadı.")
-    else:
-        for _, row in filtered_df.iterrows():
-            impact_colors = {
-                'Yüksek': '🔴',
-                'Orta': '🟡', 
-                'Düşük': '🟢'
+        function renderIncidentList(data) {
+            const listEl = document.getElementById('incident-list');
+            listEl.innerHTML = '';
+            
+            if (data.length === 0) {
+                listEl.innerHTML = '<p class="text-gray-500 text-center p-4">Sonuç bulunamadı.</p>';
+                return;
             }
-            impact_emoji = impact_colors.get(row['etkiSeviyesi'], '⚪')
             
-            is_active = st.session_state.selected_id == row['id']
+            data.forEach(item => {
+                const colors = {
+                    'Yüksek': 'border-red-500',
+                    'Orta': 'border-yellow-500',
+                    'Düşük': 'border-green-500'
+                };
+                const borderColor = colors[item.etkiSeviyesi] || 'border-gray-300';
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `incident-item ${borderColor}`;
+                itemDiv.dataset.id = item.id;
+                itemDiv.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="font-bold text-gray-800">${item.tesisAdi}</div>
+                        <div class="text-xs text-gray-500">${item.tarih}</div>
+                    </div>
+                    <div class="text-sm text-gray-600 mt-1">${item.il}, ${item.ilce}</div>
+                    <div class="text-xs text-gray-500 mt-1">${item.olayTuru}</div>
+                `;
+                itemDiv.onclick = () => showDetails(item);
+                listEl.appendChild(itemDiv);
+            });
             
-            # Container ile kart oluştur
-            with st.container():
-                col = st.columns([1])
-                with col[0]:
-                    # Basit button ile tıklama
-                    button_label = f"{impact_emoji} **{row['tesisAdi']}**\n{row['il']}, {row['ilce']}\n{row['olayTuru']}"
-                    
-                    if st.button(
-                        button_label,
-                        key=f"card_{row['id']}",
-                        use_container_width=True,
-                        help=f"{row['tarih']} - Detayları görmek için tıklayın"
-                    ):
-                        st.session_state.selected_id = row['id']
-                        st.session_state.show_details = True
-                        st.rerun()
-                    
-                    # Aktif öğeyi vurgula
-                    if is_active:
-                        st.markdown("""
-                        <style>
-                            div[data-testid="stButton"] > button[kind="secondary"] {
-                                background-color: #eef2ff !important;
-                                border-left: 4px solid #4f46e5 !important;
-                            }
-                        </style>
-                        """, unsafe_allow_html=True)
+            document.getElementById('result-count').textContent = `${data.length} sonuç bulundu`;
+        }
 
-# Sağ panel
-with col_right:
-    if st.session_state.show_details and st.session_state.selected_id:
-        # Detay görünümü
-        selected = filtered_df[filtered_df['id'] == st.session_state.selected_id]
-        
-        if not selected.empty:
-            selected = selected.iloc[0]
+        function showDetails(incident) {
+            currentIncident = incident;
+            document.querySelectorAll('.incident-item').forEach(el => el.classList.remove('active-item'));
+            document.querySelector(`[data-id="${incident.id}"]`).classList.add('active-item');
             
-            # Kapat butonu
-            if st.button("✖ Kapat"):
-                st.session_state.show_details = False
-                st.session_state.selected_id = None
-                st.rerun()
+            const detailsPanel = document.getElementById('details-panel');
+            const analysisPanel = document.getElementById('analysis-panel');
             
-            # Detay içeriği
-            # Etki seviyesi badge
-            if selected['etkiSeviyesi'] == 'Yüksek':
-                st.error(f"🔴 Yüksek Etki Seviyesi")
-            elif selected['etkiSeviyesi'] == 'Orta':
-                st.warning(f"🟡 Orta Etki Seviyesi")
-            else:
-                st.success(f"🟢 Düşük Etki Seviyesi")
-            
-            # Başlık ve konum
-            st.markdown(f"## {selected['tesisAdi']}")
-            st.markdown(f"📍 **Konum:** {selected['konum']}, {selected['ilce']}/{selected['il']}")
-            
-            # Bilgi kartları
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric("Tarih", selected['tarih'])
-                st.metric("Sektör", selected['sektor'])
-            with col2:
-                st.metric("Olay Türü", selected['olayTuru'])
-                st.metric("Doğruluk Oranı", f"%{selected['dogrulukOrani']}")
-            
-            # Doğruluk oranı progress bar
-            st.progress(selected['dogrulukOrani'] / 100)
-            
-            # Olay özeti
-            st.info(f"**📝 Olay Özeti**\n\n{selected['ozet']}")
-            
-            # Hasar etkisi
-            st.markdown("### 💥 Direkt Hasar Etkisi")
-            st.write(selected['etki'])
-            
-            # Haber alıntıları
-            st.markdown("### 📰 Haber Alıntıları")
-            for haber in selected['haberler']:
-                st.write(f"• {haber}")
-            
-            # Detay haritası
-            st.markdown("### 📍 Konum Detayı")
-            detail_map = create_map(pd.DataFrame([selected]), selected['id'])
-            folium_static(detail_map, height=400)
-    
-    else:
-        # Normal görünüm - Harita ve analizler
-        tabs = st.tabs(["🗺️ Hasar Konumları Haritası", "📊 Öne Çıkan Analizler"])
-        
-        with tabs[0]:
-            m = create_map(filtered_df, st.session_state.selected_id)
-            folium_static(m, height=500)
-        
-        with tabs[1]:
-            # Metrikler
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
-                st.markdown(f"""
-                <div class="metric-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                    <div style="font-size: 0.875rem; opacity: 0.9;">Toplam Vaka</div>
-                    <div style="font-size: 2.5rem; font-weight: bold; margin: 8px 0;">{len(filtered_df)}</div>
+            detailsPanel.innerHTML = `
+                <button onclick="closeDetails()" class="float-right text-2xl text-gray-500 hover:text-gray-800">&times;</button>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">${incident.tesisAdi}</h2>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="bg-gray-50 p-3 rounded">
+                        <div class="text-sm text-gray-500">Tarih</div>
+                        <div class="font-semibold">${incident.tarih}</div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <div class="text-sm text-gray-500">Olay Türü</div>
+                        <div class="font-semibold">${incident.olayTuru}</div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <div class="text-sm text-gray-500">Sektör</div>
+                        <div class="font-semibold">${incident.sektor}</div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <div class="text-sm text-gray-500">Doğruluk Oranı</div>
+                        <div class="font-semibold">%${incident.dogrulukOrani}</div>
+                    </div>
                 </div>
-                """, unsafe_allow_html=True)
-            
-            with col2:
-                high_count = len(filtered_df[filtered_df['etkiSeviyesi'] == 'Yüksek'])
-                st.markdown(f"""
-                <div class="metric-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                    <div style="font-size: 0.875rem; opacity: 0.9;">Yüksek Etkili</div>
-                    <div style="font-size: 2.5rem; font-weight: bold; margin: 8px 0;">{high_count}</div>
+                <div class="bg-blue-50 p-4 rounded mb-4">
+                    <h4 class="font-semibold text-blue-900 mb-2">Olay Özeti</h4>
+                    <p class="text-sm">${incident.ozet}</p>
                 </div>
-                """, unsafe_allow_html=True)
-            
-            with col3:
-                most_freq = filtered_df['olayTuru'].mode()[0] if not filtered_df.empty else "-"
-                st.markdown(f"""
-                <div class="metric-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
-                    <div style="font-size: 0.875rem; opacity: 0.9;">En Sık Olay</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; margin: 8px 0;">{most_freq}</div>
+                <div class="mb-4">
+                    <h4 class="font-semibold text-gray-700 mb-2">Hasar Etkisi</h4>
+                    <p class="text-sm">${incident.etki}</p>
                 </div>
-                """, unsafe_allow_html=True)
+            `;
             
-            with col4:
-                most_sector = filtered_df['sektor'].str.split(' / ').str[0].mode()[0] if not filtered_df.empty else "-"
-                st.markdown(f"""
-                <div class="metric-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
-                    <div style="font-size: 0.875rem; opacity: 0.8;">En Riskli Sektör</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; margin: 8px 0;">{most_sector}</div>
-                </div>
-                """, unsafe_allow_html=True)
+            detailsPanel.classList.remove('hidden');
+            analysisPanel.classList.add('hidden');
             
-            # Grafikler
-            if not filtered_df.empty:
-                st.markdown("---")
-                col1, col2 = st.columns(2)
+            map.setView([incident.lat, incident.lng], 14);
+        }
+
+        function closeDetails() {
+            document.getElementById('details-panel').classList.add('hidden');
+            document.getElementById('analysis-panel').classList.remove('hidden');
+            document.querySelectorAll('.incident-item').forEach(el => el.classList.remove('active-item'));
+            currentIncident = null;
+            map.setView([39.0, 35.0], 6);
+        }
+
+        function initMap() {
+            map = L.map('map').setView([39.0, 35.0], 6);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+        }
+
+        function updateMapMarkers(data) {
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            
+            data.forEach(item => {
+                const colors = {
+                    'Yüksek': 'red',
+                    'Orta': 'orange',
+                    'Düşük': 'green'
+                };
+                const color = colors[item.etkiSeviyesi] || 'gray';
                 
-                with col1:
-                    st.markdown("#### 📊 Sektörlere Göre Hasar Sayısı")
-                    sector_counts = filtered_df['sektor'].value_counts()
-                    fig1 = px.bar(
-                        x=sector_counts.values,
-                        y=sector_counts.index,
-                        orientation='h',
-                        color_discrete_sequence=['#6366f1']
-                    )
-                    fig1.update_layout(
-                        height=350,
-                        showlegend=False,
-                        xaxis_title="Hasar Sayısı",
-                        yaxis_title="",
-                        plot_bgcolor='rgba(0,0,0,0)',
-                        paper_bgcolor='rgba(0,0,0,0)'
-                    )
-                    st.plotly_chart(fig1, use_container_width=True)
+                const icon = L.divIcon({
+                    html: `<div style="color: ${color}; font-size: 20px;"><i class="fa fa-fire"></i></div>`,
+                    className: 'custom-div-icon',
+                    iconSize: [30, 30]
+                });
                 
-                with col2:
-                    st.markdown("#### 📈 Etki Seviyesi Dağılımı")
-                    impact_data = filtered_df['etkiSeviyesi'].value_counts()
-                    colors = {'Yüksek': '#ef4444', 'Orta': '#f59e0b', 'Düşük': '#22c55e'}
-                    fig2 = px.pie(
-                        values=impact_data.values,
-                        names=impact_data.index,
-                        color=impact_data.index,
-                        color_discrete_map=colors
-                    )
-                    fig2.update_layout(
-                        height=350,
-                        plot_bgcolor='rgba(0,0,0,0)',
-                        paper_bgcolor='rgba(0,0,0,0)'
-                    )
-                    st.plotly_chart(fig2, use_container_width=True)
+                L.marker([item.lat, item.lng], {icon: icon})
+                    .bindPopup(`<b>${item.tesisAdi}</b><br>${item.olayTuru}`)
+                    .addTo(map);
+            });
+        }
+
+        function updateCharts(data) {
+            // Metrik kartları
+            const metricsHtml = `
+                <div class="bg-blue-50 p-4 rounded-lg text-center">
+                    <div class="text-3xl font-bold text-blue-900">${data.length}</div>
+                    <div class="text-sm text-blue-700">Toplam Vaka</div>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg text-center">
+                    <div class="text-3xl font-bold text-red-900">${data.filter(d => d.etkiSeviyesi === 'Yüksek').length}</div>
+                    <div class="text-sm text-red-700">Yüksek Etkili</div>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg text-center">
+                    <div class="text-3xl font-bold text-yellow-900">${data.filter(d => d.etkiSeviyesi === 'Orta').length}</div>
+                    <div class="text-sm text-yellow-700">Orta Etkili</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg text-center">
+                    <div class="text-3xl font-bold text-green-900">${data.filter(d => d.etkiSeviyesi === 'Düşük').length}</div>
+                    <div class="text-sm text-green-700">Düşük Etkili</div>
+                </div>
+            `;
+            document.getElementById('metric-cards').innerHTML = metricsHtml;
+            
+            // Sektör grafiği
+            const sektorCounts = {};
+            data.forEach(item => {
+                const sektor = item.sektor.split(' / ')[0];
+                sektorCounts[sektor] = (sektorCounts[sektor] || 0) + 1;
+            });
+            
+            const ctx1 = document.getElementById('sektorChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(sektorCounts),
+                    datasets: [{
+                        data: Object.values(sektorCounts),
+                        backgroundColor: '#6366f1'
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } }
+                }
+            });
+            
+            // Etki seviyesi grafiği
+            const etkiCounts = {
+                'Yüksek': data.filter(d => d.etkiSeviyesi === 'Yüksek').length,
+                'Orta': data.filter(d => d.etkiSeviyesi === 'Orta').length,
+                'Düşük': data.filter(d => d.etkiSeviyesi === 'Düşük').length
+            };
+            
+            const ctx2 = document.getElementById('etkiChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(etkiCounts),
+                    datasets: [{
+                        data: Object.values(etkiCounts),
+                        backgroundColor: ['#ef4444', '#f59e0b', '#22c55e']
+                    }]
+                }
+            });
+        }
+
+        function renderAll(data) {
+            renderIncidentList(data);
+            updateMapMarkers(data);
+            updateCharts(data);
+        }
+
+        function addEventListeners() {
+            ['il-filter', 'sektor-filter', 'olay-filter', 'etki-filter'].forEach(id => {
+                document.getElementById(id).addEventListener('change', applyFilters);
+            });
+            document.getElementById('reset-filters').addEventListener('click', () => {
+                ['il-filter', 'sektor-filter', 'olay-filter', 'etki-filter'].forEach(id => {
+                    document.getElementById(id).value = 'all';
+                });
+                applyFilters();
+            });
+        }
+
+        function applyFilters() {
+            const filters = {
+                il: document.getElementById('il-filter').value,
+                sektor: document.getElementById('sektor-filter').value,
+                olay: document.getElementById('olay-filter').value,
+                etki: document.getElementById('etki-filter').value
+            };
+            
+            currentFilteredData = incidentsData.filter(item => {
+                return (filters.il === 'all' || item.il === filters.il) &&
+                       (filters.sektor === 'all' || item.sektor.startsWith(filters.sektor)) &&
+                       (filters.olay === 'all' || item.olayTuru === filters.olay) &&
+                       (filters.etki === 'all' || item.etkiSeviyesi === filters.etki);
+            });
+            
+            renderAll(currentFilteredData);
+        }
+
+        // Başlat
+        init();
+    </script>
+</body>
+</html>
+"""
+
+# HTML'i render et
+components.html(html_content, height=900, scrolling=True)
