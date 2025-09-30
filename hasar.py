@@ -1,6 +1,5 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import pandas as pd
 import json
 
 # Sayfa yapılandırması
@@ -11,17 +10,75 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Veri hazırlama
+# Veri hazırlama - HTML'deki tüm veriler buraya eklendi
 incidents_data = [
-    {"id": 63, "tarih": "28.09.2025", "il": "Erzurum", "ilce": "Aziziye", "konum": "Erzurum 1. OSB", "tesisAdi": "Şahika Boya Üretim Tesisleri", "sektor": "Kimya / Boya", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 39.9510, "lng": 41.1920, "ozet": "Boya üretim tesisinin depo bölümünde çıkan yangın, bitişikte bulunan terlik hammaddesi (EVA) deposuna da sıçradı. İki tesis de büyük hasar gördü.", "etki": "Boya ve kimya tesisleri, solvent gibi yanıcı ve parlayıcı maddeler nedeniyle yangın riski en yüksek sektörlerdendir.", "haberler": ["AA: 'Erzurum OSB'de boya fabrikasında yangın.'", "Erzurum Günebakış: 'Yangın yandaki depoya da sıçradı.'"]},
-    {"id": 62, "tarih": "28.09.2025", "il": "Adana", "ilce": "Yüreğir", "konum": "Zağarlı Mahallesi", "tesisAdi": "FBY Enerji Üretim (Yüreğir BES)", "sektor": "Enerji / Biyokütle", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 90, "lat": 36.9535, "lng": 35.4182, "ozet": "Tarımsal atıklardan enerji üreten biyokütle santralinin açık alandaki atık depolama sahasında büyük bir yangın çıktı.", "etki": "Santralin yakıt stoğu önemli ölçüde yanmıştır.", "haberler": ["İHA: 'Adana'da biyokütle enerji santralinde yangın.'"]},
-    {"id": 61, "tarih": "28.09.2025", "il": "Karabük", "ilce": "Safranbolu", "konum": "Safranbolu Sanayi Sitesi", "tesisAdi": "Ahmet Sevigen Kereste Atölyesi", "sektor": "Kereste", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 41.2580, "lng": 32.6715, "ozet": "Kereste atölyesinde yangın çıktı.", "etki": "Atölye için total hasar.", "haberler": ["BirGün: 'Safranbolu sanayi sitesinde kereste atölyesi yandı.'"]},
-    {"id": 60, "tarih": "29.09.2025", "il": "Karaman", "ilce": "Merkez", "konum": "Karaman OSB", "tesisAdi": "Sosyete Un Gıda Sanayi", "sektor": "Gıda / Un", "olayTuru": "Yangın", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "B", "dogrulukOrani": 75, "lat": 37.2050, "lng": 33.2590, "ozet": "Un fabrikasının atık depolama alanında yangın çıktı.", "etki": "Düşük şiddetli hasar.", "haberler": ["Karamandan.com: 'OSB'de fabrikanın hurdalığında yangın paniği.'"]},
-    {"id": 59, "tarih": "25.09.2025", "il": "Zonguldak", "ilce": "Kilimli", "konum": "Çatalağzı, ZETES Santrali", "tesisAdi": "Eren Enerji Termik Santrali", "sektor": "Enerji / Termik Santral", "olayTuru": "Kazan/Boiler Patlağı", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 96, "lat": 41.5167, "lng": 31.9, "ozet": "Termik santralin buhar hattında patlama sonucu 3 işçi ağır yaralandı.", "etki": "Ciddi iş durması ve kar kaybı.", "haberler": ["Z Haber: 'Eren Enerji'de buhar kazanı patladı.'"]}
+    { "id": 63, "tarih": "28.09.2025", "il": "Erzurum", "ilce": "Aziziye", "konum": "Erzurum 1. OSB", "tesisAdi": "Şahika Boya Üretim Tesisleri", "sektor": "Kimya / Boya", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 39.9510, "lng": 41.1920, "ozet": "Boya üretim tesisinin depo bölümünde çıkan yangın, bitişikte bulunan terlik hammaddesi (EVA) deposuna da sıçradı. İki tesis de büyük hasar gördü.", "etki": "Boya ve kimya tesisleri, solvent gibi yanıcı ve parlayıcı maddeler nedeniyle yangın riski en yüksek sektörlerdendir. Yangının komşu bir tesise sıçraması, Üçüncü Şahıs Sorumluluk poliçesini doğrudan devreye sokar ve karmaşık bir rücu sürecini başlatır. İki farklı riskin (kimyasal ve plastik) birleştiği büyük ve komplike bir hasar dosyasıdır.", "haberler": ["AA: 'Erzurum OSB'de boya fabrikasında yangın.'", "Erzurum Günebakış: 'Yangın yandaki depoya da sıçradı.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Erzurum+OSB+yang%C4%B1n", "Erzurum Günebakış": "https://www.google.com/search?q=Erzurum+G%C3%BCnebak%C4%B1%C5%9F+boya+fabrikas%C4%B1+yang%C4%B1n", "Erzurum OSB": "#" } },
+    { "id": 62, "tarih": "28.09.2025", "il": "Adana", "ilce": "Yüreğir", "konum": "Zağarlı Mahallesi", "tesisAdi": "FBY Enerji Üretim (Yüreğir BES)", "sektor": "Enerji / Biyokütle", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 90, "lat": 36.9535, "lng": 35.4182, "ozet": "Tarımsal atıklardan enerji üreten biyokütle santralinin açık alandaki atık depolama sahasında büyük bir yangın çıktı. Yangının santralin ana ünitelerine sıçraması önlendi.", "etki": "Santralin yakıt stoğu (hammadde/emtea) önemli ölçüde yanmıştır. Yakıt beslemesi duracağı için santralin enerji üretiminde aksama yaşanması ve buna bağlı bir İş Durması (Kar Kaybı) hasarı oluşması kaçınılmazdır. Enerji santrallerinde iş durması tazminatları, genellikle maddi hasarı aşan boyutlarda olabilir.", "haberler": ["İHA: 'Adana'da biyokütle enerji santralinde yangın.'", "Habertürk: 'Santralin atık depolama alanı alev alev yandı.'"], "kaynaklar": { "İHA": "https://www.google.com/search?q=%C4%B0HA+Adana+biyok%C3%BCtle+enerji+yang%C4%B1n", "Habertürk": "https://www.google.com/search?q=Habert%C3%BCrk+Adana+biyok%C3%BCtle+santrali+yang%C4%B1n", "FBY Enerji": "#" } },
+    { "id": 61, "tarih": "28.09.2025", "il": "Karabük", "ilce": "Safranbolu", "konum": "Safranbolu Sanayi Sitesi", "tesisAdi": "Ahmet Sevigen Kereste Atölyesi", "sektor": "Kereste", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 41.2580, "lng": 32.6715, "ozet": "Sanayi sitesi içerisinde faaliyet gösteren bir kereste atölyesinde, depolanan ahşap malzemelerin ve talaşların tutuşmasıyla yangın çıktı. Atölye kullanılamaz hale geldi.", "etki": "Kereste ve ahşap işleme tesisleri, yanıcı toz ve malzeme birikimi nedeniyle yangın frekansı en yüksek sektörler arasındadır. Sanayi sitesi gibi bitişik nizam yapıların olduğu yerlerde, yangının komşu işyerlerine sıçrama riski (sorumluluk hasarı) her zaman yüksektir. Atölye için total bir hasar söz konusudur.", "haberler": ["BirGün (AA): 'Safranbolu sanayi sitesinde kereste atölyesi yandı.'", "İHA: 'Yangın güçlükle kontrol altına alındı.'"], "kaynaklar": { "BirGün": "https://www.google.com/search?q=BirG%C3%BCn+Safranbolu+sanayi+sitesi+yang%C4%B1n", "İHA": "https://www.google.com/search?q=%C4%B0HA+Karab%C3%BCk+kereste+yang%C4%B1n" } },
+    { "id": 60, "tarih": "29.09.2025", "il": "Karaman", "ilce": "Merkez", "konum": "Karaman OSB", "tesisAdi": "Sosyete Un Gıda Sanayi", "sektor": "Gıda / Un", "olayTuru": "Yangın", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "B", "dogrulukOrani": 75, "lat": 37.2050, "lng": 33.2590, "ozet": "Bir un fabrikasının üretim tesisinden ayrı, arka bölümde bulunan hurda ve atık depolama alanında yangın çıktı. Yangın, ana tesise sıçramadan söndürüldü.", "etki": "Üretimi doğrudan etkilemeyen, düşük şiddetli bir hasar. Bu tür olaylar genellikle atık yönetimi prosedürlerindeki eksikliklere veya kontrolsüz depolamaya işaret eder. Sigorta açısından, ana üretim sahası için bir risk uyarısı (risk mitigation failure) olarak değerlendirilebilir. Maddi hasar sınırlıdır.", "haberler": ["Karamandan.com: 'OSB'de fabrikanın hurdalığında yangın paniği.'"], "kaynaklar": { "Karamandan.com": "https://www.google.com/search?q=Karamandan.com+OSB+hurdal%C4%B1k+yang%C4%B1n", "Sosyal Medya": "#" } },
+    { "id": 59, "tarih": "25.09.2025", "il": "Zonguldak", "ilce": "Kilimli", "konum": "Çatalağzı, ZETES Santrali", "tesisAdi": "Eren Enerji Termik Santrali", "sektor": "Enerji / Termik Santral", "olayTuru": "Kazan/Boiler Buhar Hattı Patlağı", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 96, "lat": 41.5167, "lng": 31.9, "ozet": "Termik santralin ana kazanlarından birine giden yüksek basınçlı buhar hattında meydana gelen patlama sonucu 3 işçi ağır yaralandı. Üretim kısmen durduruldu.", "etki": "Patlama sonucu 3 işçinin ağır yaralanması, İşveren Sorumluluk poliçesi kapsamında yüksek tutarlı tazminat taleplerini gündeme getirmektedir. Santralin bir ünitesinin devre dışı kalması, ulusal şebekeye daha az enerji verilmesine yol açmış ve bu durum ciddi bir iş durması ile kar kaybı hasarını tetiklemiştir. Makine kırılması ve onarım süreçleri hasarın maddi boyutunu artıracaktır.", "haberler": ["Z Haber: 'Eren Enerji'de buhar kazanı patladı: 3 ağır yaralı.'", "Enerji Günlüğü: 'ZETES'te üretim aksadı.'"], "kaynaklar": { "Resmi Şirket Açıklaması": "#", "Z Haber": "https://www.google.com/search?q=Z+Haber+Eren+Enerji+patlama", "Enerji Günlüğü": "https://www.google.com/search?q=Enerji+G%C3%BCnl%C3%BC%C4%9F%C3%BC+ZETES", "EPDK Bildirimi": "#" }, "potansiyelEtkilenenler": [{ "ad": "Çatalağzı Termik Santrali (ÇATES)", "sektor": "Enerji", "lat": 41.5180, "lng": 31.8950 }, { "ad": "Liman Yükleme Tesisi", "sektor": "Lojistik", "lat": 41.5200, "lng": 31.9050 }] },
+    { "id": 58, "tarih": "25.09.2025", "il": "Zonguldak", "ilce": "Kilimli", "konum": "Karadon Müessesesi", "tesisAdi": "Türkiye Taşkömürü Kurumu", "sektor": "Maden / Kömür Ocağı", "olayTuru": "Çökme (Göçük)", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 98, "lat": 41.4833, "lng": 31.75, "ozet": "Karadon kömür ocağının -263 kotunda hazırlık panosunda meydana gelen tavan göçüğünde 2 maden işçisi mahsur kaldı. Kurtarma çalışmaları başlatıldı.", "etki": "Can kaybı riski ve ağır yaralanmalar, İşveren Sorumluluk poliçesi kapsamında yüksek tazminat talepleri doğuracaktır. Madende ilgili panoda üretim tamamen durdurulmuştur. Kurtarma operasyonlarının maliyeti ve potansiyel tazminat davaları ciddi bir finansal yük oluşturabilir.", "haberler": ["AA: 'Zonguldak'ta göçük: 2 madenciye ulaşılmaya çalışılıyor.'", "TTK Genel Müdürlüğü Basın Açıklaması"], "kaynaklar": { "Türkiye Taşkömürü Kurumu (TTK)": "#", "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Zonguldak+g%C3%B6%C3%A7%C3%BCk", "Sendika Açıklamaları": "#" } },
+    { "id": 57, "tarih": "25.09.2025", "il": "Manisa", "ilce": "Yunusemre", "konum": "Manisa OSB (Vestel City)", "tesisAdi": "Vestel Beyaz Eşya", "sektor": "Dayanıklı Tüketim", "olayTuru": "Kran Devrilmesi", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "B", "dogrulukOrani": 80, "lat": 38.62, "lng": 27.39, "ozet": "Manisa OSB'de bir gün arayla ikinci vinç kazası yaşandı. Vestel City içerisindeki bir mobil vinç, operasyon sırasında devrildi. Yaralanan olmadı.", "etki": "Sadece maddi hasar (devrilen vinç ve etrafındaki ekipmanlar) oluşmuştur. Üretimde önemli bir aksama beklenmemektedir. Ancak hasar, vinç operasyonunu yürüten taşeron firmaya rücu potansiyeli taşımaktadır.", "haberler": ["Manisa Kulis Haber: 'Manisa OSB'de vinç kazaları bitmiyor.'"], "kaynaklar": { "Manisa Kulis Haber": "https://www.google.com/search?q=Manisa+Kulis+Haber+Vestel+vin%C3%A7", "Şirket İçi Rapor": "#" } },
+    { "id": 56, "tarih": "24.09.2025", "il": "Manisa", "ilce": "Yunusemre", "konum": "Manisa OSB, Arçelik Kampüsü", "tesisAdi": "Arçelik Manisa Fabrikası", "sektor": "Beyaz Eşya / Fabrika", "olayTuru": "Çökme/Kran Devrilmesi", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 38.6167, "lng": 27.4167, "ozet": "Fabrika inşaatında kullanılan bir kule vincin devrilmesi sonucu 1 işçi hayatını kaybetti, 2 işçi yaralandı. Olay, inşaat sahasında paniğe neden oldu.", "etki": "Can kaybı nedeniyle yüksek tutarlı tazminat davaları riski bulunmaktadır. İnşaat projesinde durma ve gecikme yaşanacaktır. İşveren Sorumluluk ve Üçüncü Şahıs Sorumluluk poliçelerinin yanı sıra İnşaat All Risks (CAR) poliçesi de devreye girecektir.", "haberler": ["Manisa Kulis Haber: 'Arçelik inşaatında vinç faciası.'"], "kaynaklar": { "Ulusal Basın": "https://www.google.com/search?q=Manisa+Ar%C3%A7elik+in%C5%9Faat+vin%C3%A7+kazas%C4%B1", "İnşaat Mühendisleri Odası": "#" } },
+    { "id": 55, "tarih": "21.09.2025", "il": "Adana", "ilce": "Seyhan", "konum": "Küçükdikili Mahallesi", "tesisAdi": "Küçükdikili Geri Dönüşüm", "sektor": "Geri Dönüşüm", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 100, "lat": 37.0167, "lng": 35.2833, "ozet": "Geri dönüşüm tesislerinin yoğun olduğu bölgede bir fabrikada daha yangın çıktı. Depolanan yanıcı plastik atıklar nedeniyle yangın hızla yayıldı.", "etki": "Tesisin açık depolama alanı ve bazı ekipmanları tamamen yanmıştır. Çevreye yoğun toksik duman yayılması nedeniyle Çevre Kirliliği Sorumluluk riski bulunmaktadır. Bölgedeki sık yangınlar nedeniyle kundaklama ihtimali araştırılmalıdır.", "haberler": ["GZT: 'Adana'nın kanayan yarası: Geri dönüşüm yangınları.'"], "kaynaklar": { "GZT": "https://www.google.com/search?q=GZT+Adana+geri+d%C3%B6n%C3%BC%C5%9F%C3%BCm+yang%C4%B1nlar%C4%B1", "Adana İtfaiyesi": "#", "Çevre ve Şehircilik İl Müdürlüğü": "#" } },
+    { "id": 54, "tarih": "20.09.2025", "il": "Tekirdağ", "ilce": "Kapaklı", "konum": "Yanıkağıl Mahallesi", "tesisAdi": "Palet Depolama Sahası", "sektor": "Ahşap / Palet", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 80, "lat": 41.2833, "lng": 28.0833, "ozet": "Açık alanda depolanan binlerce ahşap palet, bilinmeyen bir nedenle tutuştu ve rüzgarın etkisiyle geniş bir alana yayıldı.", "etki": "Stoktaki paletlerin tamamı yanmıştır. Bu durum, firmanın müşterilerine sevkiyat yapmasını engelleyerek iş durması ve müşteri kaybı riskini beraberinde getirir. Açık alan depolaması için yangın önlemlerinin yetersizliği sorgulanmalıdır.", "haberler": ["Gerçek Gündem: 'Kapaklı'da paletler alev alev yandı.'"], "kaynaklar": { "Gerçek Gündem": "https://www.google.com/search?q=Ger%C3%A7ek+G%C3%BCndem+Kapakl%C4%B1+palet+yang%C4%B1n%C4%B1", "İtfaiye Raporu": "#" } },
+    { "id": 53, "tarih": "20.09.2025", "il": "İstanbul", "ilce": "Başakşehir", "konum": "İkitelli OSB, DEPARKO", "tesisAdi": "Deparko Nakliye Deposu", "sektor": "Lojistik / Kargo", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 41.0833, "lng": 28.8, "ozet": "Kargo ve lojistik antreposunda çıkan yangında, çok sayıda müşteriye ait ürün ve kargo paketi yandı. Yangın, binanın çökme riskini de beraberinde getirdi.", "etki": "Hem depo sahibi firma (Nakliyeci Sorumluluk poliçesi) hem de malı yanan onlarca müşteri için büyük maddi kayıp söz konusudur. Güvenilirlik ve itibar kaybı, uzun vadede daha büyük bir finansal etki yaratabilir. Tedarik zincirinde ciddi aksama yaşanmıştır.", "haberler": ["AA: 'İkitelli'de kargo deposu yandı, vatandaşların eşyaları kül oldu.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+ikitelli+depo+yang%C4%B1n", "İkitelli OSB Yönetimi": "#", "Şirket Açıklaması": "#" } },
+    { "id": 52, "tarih": "20.09.2025", "il": "Kayseri", "ilce": "Melikgazi", "konum": "Kayseri OSB, Sazyolu Cd.", "tesisAdi": "Venti Mobilya (2. tesis)", "sektor": "Mobilya", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 38.74, "lng": 35.39, "ozet": "Aynı firmaya ait ilk tesiste yaklaşık bir ay önce çıkan yangının ardından, firmanın ikinci üretim tesisinde de yangın çıktı. Kundaklama şüphesi üzerinde duruluyor.", "etki": "Firmanın üretim kapasitesi tamamen durmuştur. Bu durum, çok ciddi bir finansal kriz ve iflas riski doğurmaktadır. Sigorta şirketinin bu ikinci hasarda kundaklama şüphesini detaylı araştırması ve teminatı askıya alması gündeme gelebilir.", "haberler": ["AA: 'Aynı firmada ikinci yangın şoku.'", "Sonses TV: 'Kundaklama ihtimali araştırılıyor.'"], "kaynaklar": { "Ulusal Basın": "https://www.google.com/search?q=Kayseri+Venti+Mobilya+ikinci+yang%C4%B1n", "Kayseri Emniyet Müdürlüğü": "#", "Kayseri OSB": "#" } },
+    { "id": 51, "tarih": "18.09.2025", "il": "Aksaray", "ilce": "Merkez", "konum": "OSB, Erenler Mah.", "tesisAdi": "Tarhan Geri Dönüşüm Deposu", "sektor": "Geri Dönüşüm / Depo", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 95, "lat": 38.378, "lng": 34.04, "ozet": "Geri dönüşüm tesisinin hurda plastik depolama alanında çıkan yangın, gökyüzünü siyaha boyadı. Yangının pres makinesinden çıktığı tahmin ediliyor.", "etki": "Büyük miktarda hammadde kaybı yaşanmıştır. Tesisin faaliyetlerinde kısmi duruş söz konusudur. Pres makinesindeki arızanın üretici hatasından kaynaklanıp kaynaklanmadığı (rücu potansiyeli) araştırılmalıdır.", "haberler": ["Yeni Şafak: 'Aksaray OSB'de geri dönüşüm tesisi yandı.'"], "kaynaklar": { "Yeni Şafak": "https://www.google.com/search?q=Yeni+%C5%9Eafak+Aksaray+OSB+yang%C4%B1n", "Aksaray OSB İtfaiyesi": "#" } },
+    { "id": 50, "tarih": "18.09.2025", "il": "İzmir", "ilce": "Buca", "konum": "659/14 Sokak", "tesisAdi": "Buca Mobilya Deposu", "sektor": "Mobilya / Depo", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 95, "lat": 38.3833, "lng": 27.1667, "ozet": "Bir mobilya firmasına ait depoda çıkan yangında, depoda bulunan tüm ürünler ve stoklar kullanılamaz hale geldi. Depo binası da ağır hasar gördü.", "etki": "Firmanın stokları tamamen yok olmuştur. Siparişlerini karşılayamayacağı için ciddi bir kar kaybı ve müşteri kaybı yaşanması muhtemeldir. Bina, emtea ve kar kaybı poliçeleri kapsamında total bir depo hasarıdır.", "haberler": ["Habertürk: 'Buca'da mobilya deposu alevlere teslim.'"], "kaynaklar": { "Habertürk": "https://www.google.com/search?q=Habert%C3%BCrk+Buca+mobilya+deposu+yang%C4%B1n", "İzmir Ticaret Odası": "#" } },
+    { "id": 49, "tarih": "18.09.2025", "il": "İzmir", "ilce": "Gaziemir", "konum": "Fatih Mah., Sarnıç Bölgesi", "tesisAdi": "Lucente Mobilya", "sektor": "Mobilya", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 90, "lat": 38.35, "lng": 27.1333, "ozet": "Mobilya fabrikasının cila atölyesinde, solvent bazlı kimyasalların parlaması sonucu çıkan yangın, bitişikteki mamul depoya sıçradı.", "etki": "Cila atölyesi (makine-ekipman) ve mamul deposu (stoklar) büyük hasar görmüştür. Sevkiyata hazır ürünlerin yanması, acil bir iş durması ve kar kaybı hasarını tetikler. Üretimde en az birkaç haftalık duruş beklenmektedir.", "haberler": ["AA: 'Sarnıç'ta mobilya fabrikasında yangın.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Sarn%C4%B1%C3%A7+mobilya+yang%C4%B1n", "Ege Bölgesi Sanayi Odası": "#" } },
+    { "id": 48, "tarih": "17.09.2025", "il": "İzmir", "ilce": "Torbalı", "konum": "Örnek Sanayi Mevkii", "tesisAdi": "Kereste Fabrikası", "sektor": "Kereste", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 100, "lat": 38.15, "lng": 27.3667, "ozet": "Torbalı'da bulunan bir kereste fabrikasında, kurutma fırınında başladığı tahmin edilen yangın, rüzgarın da etkisiyle hızla yayıldı.", "etki": "Fabrika ve stoklar tamamen yanmıştır. Total bir hasar söz konusudur. Tedarik sağladığı mobilya ve inşaat sektörlerinde, bu firmanın üretim duruşu nedeniyle zincirleme etki (Tedarik Zinciri Sigortası) potansiyeli bulunmaktadır.", "haberler": ["İz Gazete: 'Torbalı'da bir fabrika daha küle döndü.'"], "kaynaklar": { "İz Gazete": "https://www.google.com/search?q=%C4%B0z+Gazete+Torbal%C4%B1+kereste+yang%C4%B1n", "Torbalı Ticaret Odası": "#" } },
+    { "id": 47, "tarih": "17.09.2025", "il": "Bursa", "ilce": "Kestel", "konum": "Eski Muradiye Mevkii", "tesisAdi": "Ahşap Palet Fabrikası", "sektor": "Ahşap / Palet", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 100, "lat": 40.2, "lng": 29.2167, "ozet": "Ahşap palet üretimi ve depolaması yapılan geniş bir alanda çıkan yangın, saatlerce söndürülemedi. Tesis tamamen küle döndü.", "etki": "Binlerce palet ve tüm üretim sahası yanmıştır. Çok yüksek maddi hasar ve uzun süreli iş durması kaçınılmazdır. Bölgedeki birçok sanayi tesisi için palet tedarikinde aksama riski bulunmaktadır.", "haberler": ["Yeni Marmara: 'Bursa'da palet fabrikası cayır cayır yandı.'"], "kaynaklar": { "Yeni Marmara": "https://www.google.com/search?q=Yeni+Marmara+Bursa+palet+fabrikas%C4%B1", "Bursa Ticaret ve Sanayi Odası": "#" } },
+    { "id": 46, "tarih": "17.09.2025", "il": "Samsun", "ilce": "Tekkeköy", "konum": "Örnek Sanayi Sitesi", "tesisAdi": "Öztürk Kereste", "sektor": "Kereste / Ağaç", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 41.25, "lng": 36.4167, "ozet": "Kereste imalathanesinin talaş depolama bölümünde çıkan yangın, tüm işletmeyi sardı. İşletme kullanılamaz hale geldi.", "etki": "Total hasar. Tesisin yeniden kurulması gerekecektir. Ciddi maddi hasar ve buna bağlı olarak en az 6-9 ay sürecek bir kar kaybı beklenmektedir.", "haberler": ["AA: 'Samsun'da kereste fabrikası yandı.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Samsun+kereste+yang%C4%B1n", "Samsun Valiliği": "#" } },
+    { "id": 45, "tarih": "12.09.2025", "il": "Manisa", "ilce": "Yunusemre", "konum": "Muradiye OSB", "tesisAdi": "Tekeli Geri Dönüşüm", "sektor": "Metal / Geri Dönüşüm", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 38.65, "lng": 27.3167, "ozet": "Metal ve kablo geri dönüşümü yapan tesiste, kablo yakıldığı sırada alevler depolanan diğer yanıcı malzemelere sıçradı.", "etki": "Açık depolama sahası ve bazı makineler zarar görmüştür. Çevre kirliliği ve yasa dışı kablo yakma iddiaları nedeniyle ek cezai yaptırım ve soruşturma riski bulunmaktadır. Bu durum hasar sürecini karmaşıklaştırabilir.", "haberler": ["Etki Haber: 'Geri dönüşüm tesisinde yine yangın.'"], "kaynaklar": { "Etki Haber": "https://www.google.com/search?q=Etki+Haber+Manisa+geri+d%C3%B6n%C3%BC%C5%9F%C3%BCm+yang%C4%B1n", "Manisa OSB Yönetimi": "#" } },
+    { "id": 44, "tarih": "12.09.2025", "il": "Sakarya", "ilce": "Akyazı", "konum": "Küçücek Mahallesi", "tesisAdi": "Plastik Geri Dönüşüm Tesisi", "sektor": "Plastik / Geri Dönüşüm", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 65, "lat": 40.7833, "lng": 30.4, "ozet": "Ruhsatsız olduğu iddia edilen bir plastik geri dönüşüm tesisinde yangın çıktı. Tesisin yasal statüsü belirsiz.", "etki": "Tesis tamamen yanmıştır. Yasal statüsü nedeniyle sigorta poliçesinin geçerliliği konusunda ciddi sorunlar yaşanması muhtemeldir. Poliçe teminatının ruhsatlı faaliyetleri kapsaması ilkesi gereği teminat dışı kalma riski yüksektir.", "haberler": ["Akyazı Haber: 'Kaçak tesiste yangın.'"], "kaynaklar": { "Akyazı Haber": "https://www.google.com/search?q=Akyaz%C4%B1+Haber+ka%C3%A7ak+tesis+yang%C4%B1n", "Sakarya Valiliği": "#" } },
+    { "id": 43, "tarih": "12.09.2025", "il": "Eskişehir", "ilce": "Odunpazarı", "konum": "Aşağı Söğütönü Mevkii", "tesisAdi": "Kereste Fabrikası", "sektor": "Kereste", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 100, "lat": 39.8333, "lng": 30.4167, "ozet": "Kereste fabrikasının kurutma fırınında çıkan yangın, depolanan tomruk ve kerestelere sıçrayarak tüm tesisi küle çevirdi.", "etki": "Fabrika ve depolanan malların tamamı yanmıştır. Total hasar. Ciddi bir maddi kayıp ve uzun süreli iş durması söz konusudur.", "haberler": ["Eskişehir Haber (X): 'Kereste fabrikası alev alev yanıyor.'"], "kaynaklar": { "Sosyal Medya": "https://www.google.com/search?q=Eski%C5%9Fehir+kereste+fabrikas%C4%B1+yan%C4%B1yor", "Yerel Basın": "#" } },
+    { "id": 42, "tarih": "12.09.2025", "il": "Edirne", "ilce": "Keşan", "konum": "Keşan OSB Şantiyesi", "tesisAdi": "Keşan OSB Su Deposu", "sektor": "OSB Altyapı", "olayTuru": "Kimyasal Maruziyet (Zehirlenme)", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "B", "dogrulukOrani": 80, "lat": 40.85, "lng": 26.6333, "ozet": "İnşaat halindeki OSB'nin su deposu inşaatında izolasyon çalışması yapan işçiler, kullandıkları epoksi bazlı kimyasaldan zehirlendi.", "etki": "3 işçinin hastaneye kaldırılması, İşveren Sorumluluk hasarını gündeme getirir. OSB altyapı inşaatında iş güvenliği açığı ve gecikme. Yüklenici firmanın sorumluluk poliçesi devreye girebilir.", "haberler": ["Yeni Ufuk: 'Keşan'da 3 işçi zehirlendi.'"], "kaynaklar": { "Yeni Ufuk": "https://www.google.com/search?q=Yeni+Ufuk+gazetesi+Ke%C5%9Fan+zehirlenme", "Keşan Devlet Hastanesi": "#" } },
+    { "id": 41, "tarih": "10.09.2025", "il": "Kocaeli", "ilce": "Dilovası", "konum": "Dilovası OSB, Liman sahası", "tesisAdi": "Poliport Kimya Limanı", "sektor": "Kimya / Liman", "olayTuru": "Kimyasal Sızıntı", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 96, "lat": 40.75, "lng": 29.5333, "ozet": "Liman sahasında bir tanktan başka bir tanka kimyasal madde transferi sırasında boru hattında sızıntı meydana geldi. Alan tahliye edildi.", "etki": "Liman operasyonları geçici olarak durdurulmuştur. Bu durum önemli bir iş duruşu kaybına yol açar. Çevreye yayılımın kontrol altına alınmış olması, büyük bir Çevre Kirliliği Sorumluluk hasarını önlemiştir, ancak temizlik masrafları olacaktır.", "haberler": ["Poliport: 'Sızıntıya anında müdahale edilmiştir.'", "Dünya: 'Poliport limanında kimyasal alarm.'"], "kaynaklar": { "Şirket Açıklaması": "#", "Dünya Gazetesi": "https://www.google.com/search?q=D%C3%BCnya+gazetesi+Poliport+kimyasal", "Kocaeli Valiliği": "#" } },
+    { "id": 40, "tarih": "08.09.2025", "il": "Mersin", "ilce": "Toroslar", "konum": "Akbelen Bulv.", "tesisAdi": "Ses ve Görüntü Sistemleri Fabrikası", "sektor": "Elektronik", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 36.8167, "lng": 34.6167, "ozet": "Elektronik cihazların monte edildiği bir fabrikada lehimleme ünitesinde yangın çıktı. Yangın, havalandırma sistemiyle diğer bölümlere de yayıldı.", "etki": "Montaj bandı ve bazı elektronik komponentler zarar görmüştür. Üretimde aksama ve siparişlerde gecikme riski bulunmaktadır. Maddi hasar orta seviyededir. Kar kaybı hasarının boyutu, alternatif üretim tesisinin olup olmamasına bağlıdır.", "haberler": ["Oxu.az: 'Mersin'de elektronik fabrikasında yangın.'"], "kaynaklar": { "Oxu.az": "https://www.google.com/search?q=Oxu.az+Mersin+elektronik+fabrikas%C4%B1nda+yang%C4%B1n", "Yerel Haber Ajansları": "#" } },
+    { "id": 39, "tarih": "04.09.2025", "il": "Niğde", "ilce": "Merkez", "konum": "Niğde OSB", "tesisAdi": "Saygın Ambalaj", "sektor": "Plastik / Ambalaj", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 95, "lat": 37.9667, "lng": 34.6833, "ozet": "Plastik ambalaj fabrikasının geri dönüşüm granül deposunda çıkan yangın, fabrikanın geneline yayıldı. Tesis büyük ölçüde kullanılamaz hale geldi.", "etki": "Hasar total'e yakındır. Tesisin gıda sektörüne ambalaj sağlayan önemli bir tedarikçi olması nedeniyle, müşterilerinin üretiminde de aksamalara yol açabilir. Bu durum, sigortalıya karşı Tedarik Zinciri İş Durması taleplerini gündeme getirebilir.", "haberler": ["Emrah Özdemir (X): 'Niğde OSB'de önemli bir sanayi tesisimizi kaybettik.'"], "kaynaklar": { "Sosyal Medya": "https://www.google.com/search?q=Emrah+%C3%96zdemir+Ni%C4%9Fde+OSB+yang%C4%B1n", "Niğde OSB Yönetimi": "#", "Ulusal Basın": "#" } },
+    { "id": 38, "tarih": "03.09.2025", "il": "Tekirdağ", "ilce": "Ergene", "konum": "Velimeşe OSB", "tesisAdi": "Sanal Tül Tekstil", "sektor": "Tekstil", "olayTuru": "Yangın", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "B", "dogrulukOrani": 92, "lat": 41.2, "lng": 27.9667, "ozet": "Tül ve perde üretimi yapan fabrikanın iplik deposunda başlayan yangın, otomatik sprinkler sisteminin devreye girmesi ve itfaiyenin hızlı müdahalesiyle kısa sürede kontrol altına alındı.", "etki": "İplik stoklarının bir kısmı su ve duman nedeniyle zarar görmüştür. Üretimde küçük çaplı bir aksama beklenmektedir. Aktif yangın koruma sistemlerinin çalışması, büyük bir hasarı önlemiştir.", "haberler": ["Hürriyet: 'Tekstil fabrikasında yangın ucuz atlatıldı.'"], "kaynaklar": { "Hürriyet": "https://www.google.com/search?q=H%C3%BCrriyet+Velime%C5%9Fe+tekstil+yang%C4%B1n", "Velimeşe OSB İtfaiyesi": "#" } },
+    { "id": 37, "tarih": "03.09.2025", "il": "Kayseri", "ilce": "Melikgazi", "konum": "Kayseri OSB, 10. Cad.", "tesisAdi": "Milkay Tekstil", "sektor": "Tekstil / Keçe", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 95, "lat": 38.735, "lng": 35.41, "ozet": "Keçe ve yalıtım malzemesi üreten fabrikanın üretim hattındaki bir makineden çıkan kıvılcım, elyafları tutuşturdu. Alevler hammadde deposuna sıçradı.", "etki": "Üretim hattı (makine) ve hammadde deposu (emtea) zarar görmüştür. Üretim durma noktasına gelmiştir. Makine hasarı ve hammadde kaybı nedeniyle ciddi maddi zarar ve iş durması beklenmektedir.", "haberler": ["AA: 'Kayseri'de bir fabrika daha yandı.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Kayseri+Milkay+Tekstil+yang%C4%B1n", "Kayseri OSB": "#" } },
+    { "id": 36, "tarih": "02.09.2025", "il": "İstanbul", "ilce": "Bağcılar", "konum": "Mahmutbey Mah., İSTOÇ 10. Ada", "tesisAdi": "İSTOÇ Ticaret Merkezi", "sektor": "Depo / İşyeri", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 41.0667, "lng": 28.8333, "ozet": "İSTOÇ'ta bulunan ve içinde çeşitli ürünlerin (tekstil, plastik, vb.) depolandığı bir işyerinde yangın çıktı. Yangın bitişikteki dükkanlara da sıçradı.", "etki": "Birden fazla işyeri zarar görmüştür. Ortak alanların ve diğer dükkanların zarar görmesi nedeniyle karmaşık bir hasar dosyasıdır. Her bir dükkan için ayrı ayrı emtea, dekorasyon ve kar kaybı hasarı hesaplanması gerekecektir.", "haberler": ["Hürriyet: 'İSTOÇ'ta korkutan yangın, milyonlarca liralık mal yandı.'"], "kaynaklar": { "Hürriyet": "https://www.google.com/search?q=H%C3%BCrriyet+%C4%B0STO%C3%87+yang%C4%B1n", "İSTOÇ Yönetimi": "#" } },
+    { "id": 35, "tarih": "31.08.2025", "il": "Kayseri", "ilce": "Melikgazi", "konum": "Kayseri OSB, 12. Cad.", "tesisAdi": "Uhud Teknik Hırdavat", "sektor": "Hırdavat / Depo", "olayTuru": "Patlama + Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 38.73, "lng": 35.4, "ozet": "Hırdavat malzemeleri deposunda bulunan tiner ve sprey boya gibi yanıcı kimyasalların patlaması sonucu büyük bir yangın çıktı. Patlamalar çevrede paniğe neden oldu.", "etki": "Depo tamamen çökmüş ve içindeki tüm mallar yanmıştır (total hasar). Çevredeki işyerlerinde de patlama kaynaklı hasar oluşmuştur (cam kırılması, cephe hasarı). Bu durum, sigortalının Üçüncü Şahıs Sorumluluk poliçesi kapsamında çok sayıda taleple karşılaşacağını göstermektedir.", "haberler": ["Deniz Postası: 'OSB'de büyük patlama, gökyüzü aydınlandı.'"], "kaynaklar": { "Deniz Postası": "https://www.google.com/search?q=Deniz+Postas%C4%B1+Kayseri+OSB+patlama", "Kayseri OSB": "#", "Kayseri Valiliği": "#" } },
+    { "id": 34, "tarih": "28.08.2025", "il": "İstanbul", "ilce": "Arnavutköy", "konum": "Yassıören Mah.", "tesisAdi": "Matbaa & Geri Dönüşüm", "sektor": "Kağıt / Ambalaj", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 41.215, "lng": 28.65, "ozet": "Kağıt ve ambalaj malzemeleri üretilen bir tesiste çıkan yangın, depolanan kağıt ruloları nedeniyle saatlerce sürdü. Tesisin çatısı çöktü.", "etki": "Büyük miktarda hammadde ve mamul ürün kaybı. Bina (çatı çökmesi) ve makine hasarı. Üretimin en az 1-2 ay durması ve buna bağlı kar kaybı beklenmektedir.", "haberler": ["AA: 'Kağıt fabrikasındaki yangın güçlükle söndürüldü.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Arnavutk%C3%B6y+ka%C4%9F%C4%B1t+fabrikas%C4%B1+yang%C4%B1n", "İstanbul İtfaiyesi": "#" } },
+    { "id": 33, "tarih": "19.08.2025", "il": "İzmir", "ilce": "Torbalı", "konum": "Yazıbaşı Mah.", "tesisAdi": "Termoteks", "sektor": "Plastik / Yalıtım", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 38.2167, "lng": 27.2, "ozet": "Yalıtım malzemeleri üreten fabrikanın hammadde deposunda başlayan yangın, rüzgarın etkisiyle fabrikanın tamamına yayıldı. Fabrika tamamen küle döndü.", "etki": "Total hasar. Fabrika tamamen yanmıştır. Bölgedeki en büyük yalıtım üreticilerinden biri olması nedeniyle inşaat sektöründe tedarik sorunları yaratabilir. Bu durum, müşterilerin Tedarik Zinciri Sigortalarını tetikleyebilir.", "haberler": ["Torbalı Güncel: 'Yazıbaşı'nda fabrika küle döndü.'"], "kaynaklar": { "Torbalı Güncel": "https://www.google.com/search?q=Torbal%C4%B1+G%C3%BCncel+Termoteks+yang%C4%B1n", "Şirket Sahibi Açıklaması": "#" } },
+    { "id": 32, "tarih": "18.08.2025", "il": "Gaziantep", "ilce": "Şehitkamil", "konum": "2. OSB", "tesisAdi": "Geri Dönüşüm Fabrikası", "sektor": "Geri Dönüşüm", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 90, "lat": 37.128, "lng": 37.312, "ozet": "Aynı sanayi bölgesinde iki gün arayla üçüncü bir geri dönüşüm tesisinde daha yangın çıktı. Kundaklama şüpheleri arttı.", "etki": "Bölgedeki yangın serisi, OSB genelinde bir güvenlik açığı veya organize bir kundaklama eylemi ihtimalini gündeme getiriyor. Bu tesiste de orta çaplı maddi hasar oluşmuştur. Kundaklama ispatlanırsa, hasar teminat dışı kalabilir.", "haberler": ["Fatma Şahin (X): 'OSB'deki yangınları yakından takip ediyoruz.'"], "kaynaklar": { "Sosyal Medya": "https://www.google.com/search?q=Fatma+%C5%9Eahin+Gaziantep+OSB+yang%C4%B1n", "Gaziantep OSB": "#" } },
+    { "id": 31, "tarih": "17.08.2025", "il": "Gaziantep", "ilce": "Şehitkamil", "konum": "2. OSB", "tesisAdi": "Akpınar Geri Dönüşüm", "sektor": "Geri Dönüşüm / Halı", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 37.127, "lng": 37.311, "ozet": "Bitişikteki Dilek Halı fabrikasından sıçrayan alevler, tesisteki yanıcı plastik ve tekstil atıklarını tutuşturarak tam bir felakete yol açtı.", "etki": "Dilek Halı yangınına bağlı olarak tam hasar. Tesis tamamen kullanılamaz durumdadır. Bu vaka, Dilek Halı'ya karşı açılacak bir rücu davası için çok net bir örnektir.", "haberler": ["İHA: 'Domino etkisi yaratan yangında ikinci fabrika da küle döndü.'"], "kaynaklar": { "Gaziantep OSB Yönetimi": "#", "İHA": "https://www.google.com/search?q=%C4%B0HA+Gaziantep+Dilek+Hal%C4%B1+yang%C4%B1n", "Çevre ve Şehircilik İl Müdürlüğü": "#" } },
+    { "id": 30, "tarih": "16.08.2025", "il": "Gaziantep", "ilce": "Şehitkamil", "konum": "2. OSB", "tesisAdi": "Dilek Halı", "sektor": "Tekstil / Halı", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 90, "lat": 37.1264, "lng": 37.3116, "ozet": "Halı fabrikasının iplik deposunda çıkan yangın, kısa sürede büyüyerek bitişikteki geri dönüşüm tesisine sıçradı. İki tesis de büyük zarar gördü.", "etki": "Çok yüksek maddi hasar ve iş durması. Yangının bitişikteki tesise sıçraması nedeniyle sigortalının Üçüncü Şahıs Sorumluluk poliçesi devreye girecektir ve komşu tesise tazminat ödemesi yapılması gerekecektir.", "haberler": ["Yerel Haber: 'Gaziantep'te dev yangın, iki fabrika alev alev.'"], "kaynaklar": { "Gaziantep Olay Medya": "https://www.google.com/search?q=Gaziantep+Olay+Medya+Dilek+Hal%C4%B1+yang%C4%B1n", "İtfaiye Tutanakları": "#", "Uydu Görüntüsü Analizi": "#" }, "etkilenenTesis": { "ad": "Akpınar Geri Dönüşüm", "lat": 37.127, "lng": 37.311 } },
+    { "id": 29, "tarih": "14.08.2025", "il": "Eskişehir", "ilce": "Odunpazarı", "konum": "EMKO Sanayi Bölgesi", "tesisAdi": "EMKO Geri Dönüşüm Tesisleri", "sektor": "Geri Dönüşüm", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 100, "lat": 39.7833, "lng": 30.5167, "ozet": "Geri dönüşümcüler sitesinde bulunan bir tesiste çıkan yangın, bitişikteki diğer tesislere de sıçrama tehlikesi yarattı. İtfaiyenin yoğun çabası tehlikeyi önledi.", "etki": "Tesisin açık alanı ve ayrıştırma bandı yanmıştır. Sitede genel bir panik havası oluşmuştur. Bitişik nizamdaki tesisler için riskin ne kadar yüksek olduğu ve ortak alanların sigortasının önemi ortaya çıkmıştır.", "haberler": ["Milliyet: 'Geri dönüşümcüler sitesi alevlere teslim.'"], "kaynaklar": { "Milliyet": "https://www.google.com/search?q=Milliyet+Eski%C5%9Fehir+EMKO+yang%C4%B1n", "Eskişehir Sanayi Odası": "#" } },
+    { "id": 28, "tarih": "13.08.2025", "il": "Manisa", "ilce": "Yunusemre", "konum": "Manisa OSB", "tesisAdi": "İs Makina Isı Ürünleri", "sektor": "Metal Kaplama / Isı Ürünleri", "olayTuru": "Kimyasal Sızıntı (Buhar)", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 38.63, "lng": 27.38, "ozet": "Metal kaplama banyolarından birinde meydana gelen aşırı ısınma nedeniyle kimyasal buhar sızıntısı oldu. Tesisteki 20 işçi etkilendi.", "etki": "Üretim durdurulmuş ve tesis karantinaya alınmıştır. 20 işçinin etkilenmesi, İşveren Sorumluluk poliçesi kapsamında yüksek tutarlı tazminat talepleri beklenmesine neden olmaktadır. Üretimdeki duruş nedeniyle kar kaybı da oluşacaktır.", "haberler": ["İHA/Yeni Asır: 'Manisa OSB'de kimyasal sızıntı: 20 işçi hastanelik.'"], "kaynaklar": { "İHA/Yeni Asır": "https://www.google.com/search?q=%C4%B0HA+Yeni+As%C4%B1r+Manisa+OSB+kimyasal+s%C4%B1z%C4%B1nt%C4%B1", "Manisa OSB Yönetimi": "#", "Manisa Valiliği": "#" } },
+    { "id": 27, "tarih": "13.08.2025", "il": "Kocaeli", "ilce": "Kartepe", "konum": "Uzunçiftlik Mah.", "tesisAdi": "Akademi Çevre Entegre Atık", "sektor": "Geri Dönüşüm", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 40.7167, "lng": 30.0167, "ozet": "Entegre atık yönetimi tesisinin tehlikeli ve tehlikesiz atık depolama bölümünde büyük bir yangın çıktı. Patlama sesleri duyuldu.", "etki": "Tesise kabul edilen önemli miktarda sanayi atığı yanmıştır. Çevreye yoğun kimyasal duman yayılması, ciddi bir çevre felaketi riskini ve buna bağlı yüksek tutarlı Çevre Kirliliği Sorumluluk hasarını gündeme getirmiştir.", "haberler": ["Kocaeli Fikir: 'Kartepe'de çevre felaketine yol açabilecek yangın.'"], "kaynaklar": { "Kocaeli Fikir": "https://www.google.com/search?q=Kocaeli+Fikir+Kartepe+at%C4%B1k+yang%C4%B1n", "Kocaeli Valiliği": "#", "TEMA Vakfı Raporu": "#" } },
+    { "id": 26, "tarih": "10.08.2025", "il": "İzmir", "ilce": "Aliağa", "konum": "ALOSBİ", "tesisAdi": "HABAŞ Sınai ve Tıbbi Gazlar", "sektor": "Metal İşleme", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 95, "lat": 38.8, "lng": 26.9667, "ozet": "Demir çelik tesisinin hurda depolama sahasında, preslenmiş araç hurdalarının içinde kalan yanıcı maddelerden dolayı yangın çıktı.", "etki": "Hurda sahasında kontrolü zor bir yangın yaşanmıştır. Üretimi doğrudan etkilemese de hammadde hazırlığında aksama olmuştur. Hurda tedarikçisinin kusurlu malzeme sağlaması nedeniyle rücu imkanı araştırılmalıdır.", "haberler": ["İzmir İtfaiyesi (IG): 'Hurda yangınına müdahale devam ediyor.'"], "kaynaklar": { "Sosyal Medya": "#", "Aliağa OSB İtfaiyesi": "#" } },
+    { "id": 25, "tarih": "10.08.2025", "il": "Kocaeli", "ilce": "Darıca", "konum": "Osmangazi Mah.", "tesisAdi": "Endüstriyel Mutfak Ekipmanları Fab.", "sektor": "Endüstriyel Mutfak", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 90, "lat": 40.7833, "lng": 29.35, "ozet": "Endüstriyel mutfak ekipmanları üreten fabrikanın polisaj bölümünde çıkan yangın, havalandırma sisteminden yayıldı.", "etki": "Polisaj ve montaj bölümü hasar görmüştür. Siparişlerin teslimatında gecikmeler olabilir. Üretimdeki aksama nedeniyle kar kaybı beklenmektedir. Maddi hasar (bina, makine, emtea) orta seviyededir.", "haberler": ["AA: 'Darıca'da fabrika yangını.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Dar%C4%B1ca+fabrika+yang%C4%B1n", "Kocaeli Sanayi Odası": "#" } },
+    { "id": 24, "tarih": "10.08.2025", "il": "Balıkesir", "ilce": "Gönen", "konum": "Hasanbey Mah.", "tesisAdi": "Tek-Süt Süt Ürünleri", "sektor": "Gıda / Süt Ürünleri", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 40.106, "lng": 27.654, "ozet": "Süt ürünleri fabrikasının ambalaj deposunda çıkan yangın, fabrikanın idari binasına da sıçradı. Yangının elektrik kontağından çıktığı tahmin ediliyor.", "etki": "Ambalaj malzemesi stoğu ve idari ofisler yanmıştır. Ürün sevkiyatında ambalajlama sorunu yaşanacaktır. İdari binanın yanması, muhasebe kayıtları ve yönetimsel faaliyetleri de durdurarak iş durması sürecini uzatacaktır.", "haberler": ["Yenigün Balıkesir: 'Tek-Süt fabrikasında büyük yangın.'"], "kaynaklar": { "Yenigün Balıkesir": "https://www.google.com/search?q=Yenig%C3%BCn+Bal%C4%B1kesir+Tek-S%C3%BCt+yang%C4%B1n", "Şirket Açıklaması": "#" } },
+    { "id": 23, "tarih": "06.08.2025", "il": "Karaman", "ilce": "Merkez", "konum": "Karaman OSB", "tesisAdi": "Eldem Mobilya", "sektor": "Mobilya", "olayTuru": "Yangın", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "B", "dogrulukOrani": 90, "lat": 37.1833, "lng": 33.2167, "ozet": "Mobilya iskeleti üreten atölyenin talaş silosunda sıkışma nedeniyle yangın başladı. Otomatik söndürme sistemi devreye girerek alevleri bastırdı.", "etki": "Talaş toplama sistemi ve silo hasar görmüştür. Üretimde temizlik ve onarım için kısa süreli ara verilmiştir. Hasarın küçük kalması, aktif koruma sistemlerinin önemini ve sigortalı seçiminde bu tür sistemlerin varlığının bir kriter olması gerektiğini göstermektedir.", "haberler": ["Karaman24: 'Talaş silosundaki yangın büyümeden söndürüldü.'"], "kaynaklar": { "Karaman24": "https://www.google.com/search?q=Karaman24+tala%C5%9F+silosu+yang%C4%B1n", "Karaman OSB": "#" } },
+    { "id": 22, "tarih": "06.08.2025", "il": "Çorum", "ilce": "Merkez", "konum": "Çorum OSB", "tesisAdi": "Ersa Tekstil Konfeksiyon", "sektor": "Tekstil", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 96, "lat": 40.55, "lng": 34.95, "ozet": "İhracata yönelik üretim yapan tekstil fabrikasının kesimhane bölümünde, elektrikli kesim motorunun aşırı ısınması sonucu yangın çıktı.", "etki": "Kesimhane bölümündeki makineler ve kumaşlar zarar görmüştür. İhracat sevkiyatları aksayabilir. Müşterilere karşı gecikme cezaları gündeme gelebilir ve bu durum şirketin itibarına zarar verebilir.", "haberler": ["TRT Haber: 'Çorum OSB'de tekstil fabrikasında yangın.'"], "kaynaklar": { "TRT Haber": "https://www.google.com/search?q=TRT+Haber+%C3%87orum+OSB+tekstil+yang%C4%B1n", "Şirket KAP Açıklaması": "#" } },
+    { "id": 21, "tarih": "05.08.2025", "il": "Konya", "ilce": "Çumra", "konum": "Çumra OSB", "tesisAdi": "GNC Alüminyum", "sektor": "Alüminyum", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 90, "lat": 37.571, "lng": 32.775, "ozet": "Alüminyum ekstrüzyon tesisinin fırın bölümünde çıkan yangın, soğutma yağlarının tutuşmasıyla büyüdü. Tesisin çatısında hasar meydana geldi.", "etki": "Ekstrüzyon presi ve fırın hasar görmüştür. Üretimde en az bir aylık gecikme beklenmektedir. Bina ve makine hasarının yanı sıra ciddi bir iş durması hasarı söz konusudur.", "haberler": ["GNC (Katalog/Adres): 'Firmadan henüz bir açıklama yapılmadı.'"], "kaynaklar": { "Konya Sanayi Odası": "#", "Yerel Basın": "#" } },
+    { "id": 20, "tarih": "03.08.2025", "il": "Tekirdağ", "ilce": "Ergene", "konum": "Avrupa Serbest Bölgesi", "tesisAdi": "N2O GAS AHMET SOĞUKOĞLU", "sektor": "Kimya / Gaz Üretimi", "olayTuru": "Patlama + Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 41.155, "lng": 27.755, "ozet": "Anestezi gazı (N2O) üretim tesisinde bir gaz tankında meydana gelen şiddetli patlama sonrası yangın çıktı. Patlama sesi geniş bir alandan duyuldu.", "etki": "Tesisin dolum ünitesinde ağır hasar oluşmuştur. Ülke çapında medikal gaz tedariğinde aksama riski bulunmaktadır. Çevreye kontrolsüz gaz salınımı nedeniyle Üçüncü şahıs ve Çevre Kirliliği Sorumluluk hasarları beklenmektedir.", "haberler": ["AA: 'Serbest Bölge'de şiddetli patlama.'", "Bianet: 'Patlamada yaralananlar var.'"], "kaynaklar": { "Serbest Bölge Müdürlüğü": "#", "Sağlık Bakanlığı Açıklaması": "#", "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Tekirda%C4%9F+Serbest+B%C3%B6lge+patlama" } },
+    { "id": 19, "tarih": "31.07.2025", "il": "Kocaeli", "ilce": "Körfez", "konum": "Kutluca Köyü", "tesisAdi": "Saman Deposu", "sektor": "Tarım / Depo", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 90, "lat": 40.85, "lng": 29.6833, "ozet": "Saman ve tarım aletlerinin bulunduğu bir depoda çıkan yangında, depoda bulunan bir traktör de yandı. Yangının kundaklama sonucu çıktığı iddia ediliyor.", "etki": "Depo, içindeki samanlar ve bir traktör kullanılamaz hale gelmiştir. Hasar sahibi için önemli bir kayıptır. Kundaklama iddiası nedeniyle hasar soruşturması uzayabilir ve sigorta şirketinin ödemeyi geciktirmesine veya reddetmesine neden olabilir.", "haberler": ["T24: 'Körfez'de samanlık yangını.'"], "kaynaklar": { "T24": "https://www.google.com/search?q=T24+K%C3%B6rfez+samanl%C4%B1k+yang%C4%B1n%C4%B1", "Kocaeli Jandarma Komutanlığı": "#" } },
+    { "id": 18, "tarih": "30.07.2025", "il": "İstanbul", "ilce": "Arnavutköy", "konum": "Bolluca Mahallesi", "tesisAdi": "Renksan Plastik Sünger", "sektor": "Plastik / Sünger", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 41.175, "lng": 28.79, "ozet": "Plastik ve sünger fabrikasının depolama alanında çıkan yangın, fabrikanın tamamına yayıldı. Tesisin çatısı tamamen çöktü.", "etki": "Fabrika binası ve makineler büyük hasar görmüştür. Üretim tamamen durmuştur. Hasarın total'e yakın bir durum olduğu ve yeniden inşa sürecinin uzun süreceği, dolayısıyla kar kaybı hasarının da yüksek olacağı öngörülmektedir.", "haberler": ["Arnavutköy Kaymakamlığı: 'Yangın kontrol altına alındı, hasar tespiti yapılıyor.'"], "kaynaklar": { "Arnavutköy Kaymakamlığı": "#", "İstanbul İtfaiyesi": "#" } },
+    { "id": 17, "tarih": "29.07.2025", "il": "İstanbul", "ilce": "Çekmeköy", "konum": "Alemdağ Mah.", "tesisAdi": "İnter Sünger Kimya", "sektor": "Kimya / Sünger-Elyaf", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 41.0553, "lng": 29.2158, "ozet": "Sünger ve elyaf üretim tesisinde kimyasal hammaddelerin bulunduğu tanklarda başlayan yangın, büyük paniğe neden oldu. Yoğun duman nedeniyle bölge trafiğe kapatıldı.", "etki": "Hammadde stokları ve üretim reaktörleri zarar görmüştür. Yüksek maddi hasarın yanı sıra, çevreye yayılan kimyasal koku nedeniyle halk sağlığı endişeleri oluşmuş ve bu durum firmanın itibarına zarar vermiştir. Potansiyel Çevre Kirliliği Sorumluluk hasarı söz konusudur.", "haberler": ["AA: 'Çekmeköy'de kimya fabrikasında korkutan yangın.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+%C3%87ekmek%C3%B6y+kimya+yang%C4%B1n", "Çekmeköy Belediyesi": "#", "İstanbul Valiliği": "#" } },
+    { "id": 16, "tarih": "25.07.2025", "il": "Ankara", "ilce": "Sincan", "konum": "ASO 1. OSB", "tesisAdi": "Akkayalar Konveyör", "sektor": "Metal / Makine", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 90, "lat": 39.9922, "lng": 32.6925, "ozet": "Konveyör bant sistemleri üreten fabrikanın kaynak atölyesinde çıkan yangın, mamul deposuna sıçradı. Yangın, gece saatlerinde fark edildi.", "etki": "Sevkiyata hazır ürünlerin bir kısmı zarar görmüştür. Üretimde bir haftalık aksama beklenmektedir. Gece vardiyası olmaması can kaybını önlemiştir. Maddi hasar ve kısa süreli iş durması hasarı beklenmektedir.", "haberler": ["DHA: 'Ankara OSB'de fabrika yangını.'"], "kaynaklar": { "Doğan Haber Ajansı": "https://www.google.com/search?q=DHA+Ankara+OSB+fabrika+yang%C4%B1n%C4%B1", "Ankara Sanayi Odası": "#" } },
+    { "id": 15, "tarih": "23.07.2025", "il": "Kocaeli", "ilce": "İzmit", "konum": "Sanayi Mahallesi", "tesisAdi": "Kompozit Ürünler Deposu", "sektor": "Kompozit", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "B", "dogrulukOrani": 80, "lat": 40.7667, "lng": 29.9167, "ozet": "Kompozit ürünlerin (fiberglas, reçine vb.) depolandığı bir tesiste çıkan yangın, kimyasal maddeler nedeniyle patlamalara neden oldu.", "etki": "Depo ve içindeki malzemeler tamamen yok olmuştur (total hasar). Çevreye zehirli gaz yayılımı riski oluşmuştur. Sorumluluk ve Çevre Kirliliği hasarları beklenmektedir. Hasarın karmaşıklığı yüksektir.", "haberler": ["Hürriyet: 'İzmit Sanayi'de patlamalı yangın.'"], "kaynaklar": { "Hürriyet": "https://www.google.com/search?q=H%C3%BCrriyet+%C4%B0zmit+Sanayi+patlamal%C4%B1+yang%C4%B1n", "Kocaeli İtfaiyesi": "#" } },
+    { "id": 14, "tarih": "22.07.2025", "il": "Kayseri", "ilce": "Melikgazi", "konum": "Kayseri OSB", "tesisAdi": "Venti Mobilya", "sektor": "Mobilya", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 38.745, "lng": 35.385, "ozet": "Mobilya fabrikasının sünger ve elyaf deposunda başlayan yangın, tüm tesisi sardı. Tesis kullanılamaz hale geldi. Bu, firmanın son iki ayda yaşadığı ikinci büyük yangın.", "etki": "Total hasar. Fabrika tamamen yanmıştır. Firmanın sigorta geçmişi ve risk yönetimi uygulamaları, bu ikinci büyük hasar sonrası detaylı incelenmelidir. Ahlaki riziko (moral hazard) ihtimali göz önünde bulundurulmalıdır.", "haberler": ["Kayseri Manşet: 'Kayseri OSB'de dev fabrika küle döndü.'"], "kaynaklar": { "Kayseri Manşet": "https://www.google.com/search?q=Kayseri+Man%C5%9Fet+Venti+Mobilya+yang%C4%B1n", "Kayseri OSB İtfaiye Raporu": "#", "Ticaret Odası Bildirimi": "#" } },
+    { "id": 13, "tarih": "22.07.2025", "il": "Bursa", "ilce": "Nilüfer", "konum": "Hasanağa OSB", "tesisAdi": "Karsan Otomotiv", "sektor": "Otomotiv (Otobüs)", "olayTuru": "Yangın", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "A", "dogrulukOrani": 97, "lat": 40.245, "lng": 28.855, "ozet": "Otobüs üretim fabrikasının boyahane bölümünde çıkan yangın, otomatik söndürme sisteminin devreye girmesiyle kısa sürede kontrol altına alındı.", "etki": "Boyahane fırınında hasar oluşmuştur. Üretim akışında küçük çaplı bir aksama yaşanmıştır. Aktif yangın koruma sistemlerinin hasarı önlemedeki başarısı, underwriting sürecinde bu tür sistemlere sahip risklerin daha olumlu değerlendirilmesi gerektiğini göstermektedir.", "haberler": ["İHA: 'Karsan fabrikasında yangın paniği.'"], "kaynaklar": { "İhlas Haber Ajansı": "https://www.google.com/search?q=%C4%B0hlas+Haber+Ajans%C4%B1+Karsan+yang%C4%B1n", "Şirket KAP Açıklaması": "#" } },
+    { "id": 12, "tarih": "21.07.2025", "il": "Bursa", "ilce": "Osmangazi", "konum": "Veysel Karani Mah.", "tesisAdi": "Arden Konfeksiyon", "sektor": "Tekstil", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 40.2167, "lng": 29.0667, "ozet": "Tekstil atölyesinin kumaş deposunda çıkan yangın, bitişikteki binalara sıçramadan kontrol altına alındı. Depo tamamen yandı.", "etki": "Stoktaki kumaşların tamamı yanmıştır. Yaz sezonu üretiminde ciddi aksama ve sipariş iptalleri riski bulunmaktadır. İş durması hasarı beklenmektedir.", "haberler": ["Hürriyet: 'Bursa'da tekstil atölyesi alevlere teslim oldu.'"], "kaynaklar": { "Hürriyet": "https://www.google.com/search?q=H%C3%BCrriyet+Bursa+tekstil+at%C3%B6lyesi+yang%C4%B1n", "Bursa İtfaiyesi": "#" } },
+    { "id": 11, "tarih": "18.07.2025", "il": "Kocaeli", "ilce": "Dilovası", "konum": "İMES OSB", "tesisAdi": "AKTL Asil Kataforez", "sektor": "Metal Kaplama / KTL", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 88, "lat": 40.8105, "lng": 29.54, "ozet": "Otomotiv yan sanayi için metal kaplama yapan tesisin asit ve kimyasal banyolarının bulunduğu bölümde çıkan yangın, özel köpüklü müdahale gerektirdi.", "etki": "Kataforez kaplama hattı durmuştur. Otomotiv ana sanayine parça sağlayan tesiste sevkiyatlar aksayacaktır. Tedarik zincirinde aksama nedeniyle müşterilerin kar kaybı talepleri (Tedarik Zinciri İş Durması) olabilir.", "haberler": ["DHA: 'Kimyasal fabrikasındaki yangına özel ekipler müdahale etti.'"], "kaynaklar": { "Doğan Haber Ajansı": "https://www.google.com/search?q=DHA+Dilovas%C4%B1+kimyasal+yang%C4%B1n", "Kocaeli Sanayi Odası": "#", "Sosyal Medya Görüntüleri": "#" } },
+    { "id": 10, "tarih": "17.07.2025", "il": "Elazığ", "ilce": "Merkez", "konum": "Elazığ OSB", "tesisAdi": "Karaca Harput Kireç", "sektor": "Kireç", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 85, "lat": 38.6533, "lng": 39.2942, "ozet": "Kireç fabrikasının kömür depolama bunkerinde başlayan yangın, taşıyıcı bant sistemine zarar verdi. Kendi kendine yanma (self-combustion) şüphesi var.", "etki": "Üretim için gerekli olan yakıt besleme sistemi hasar görmüştür. Üretimin bir süre durması beklenmektedir. Hammadde depolama standartlarının ve kömürün kalitesinin incelenmesi gerekmektedir.", "haberler": ["Hürriyet: 'İtfaiye ekipleri, kömür yangınına müdahalede zorlandı.'"], "kaynaklar": { "Hürriyet": "https://www.google.com/search?q=H%C3%BCrriyet+Elaz%C4%B1%C4%9F+kire%C3%A7+fabrikas%C4%B1+yang%C4%B1n", "Elazığ OSB": "#" } },
+    { "id": 9, "tarih": "15.07.2025", "il": "Bolu", "ilce": "Karacasu", "konum": "Büyük Berk Mah.", "tesisAdi": "Şafak Enjektör Medikal", "sektor": "Medikal Üretim", "olayTuru": "Yangın", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 40.702, "lng": 31.6267, "ozet": "Medikal enjektör üreten fabrikanın sterilizasyon ünitesinde çıkan yangın, itfaiyenin hızlı müdahalesiyle büyümeden söndürüldü.", "etki": "Sterilizasyon ünitesinde hasar oluşmuştur. Üretimde hijyen standartları normale dönene kadar aksama yaşanabilir. Maddi hasar sınırlıdır ve büyük bir kar kaybı beklenmemektedir.", "haberler": ["Bolu Valiliği (X): 'Yangına anında müdahale edildi.'"], "kaynaklar": { "Bolu Valiliği": "#", "Yerel Basın": "https://www.google.com/search?q=Bolu+Karacasu+%C5%9Eafak+Enjekt%C3%B6r+yang%C4%B1n" } },
+    { "id": 8, "tarih": "09.07.2025", "il": "Tekirdağ", "ilce": "Çorlu", "konum": "Hatip Mah.", "tesisAdi": "ION Reklam Yapı Ürünleri", "sektor": "Kompozit Panel / Reklam", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 85, "lat": 41.1594, "lng": 27.801, "ozet": "Kompozit panel üretimi yapan fabrikanın depo kısmında başlayan yangın, kimyasal maddeler nedeniyle kontrol altına alınmakta zorlanıldı.", "etki": "Depo bölümü ve içerisindeki ürünler tamamen yanmıştır. Yüksek maddi hasar söz konusudur. Kimyasal içerikli ürünler nedeniyle söndürme çalışmaları zor ve maliyetli olmuştur. Çevreye yayılım riski de bulunmaktadır.", "haberler": ["Hürriyet: 'Çorlu'da kimyasal madde fabrikasında yangın.'"], "kaynaklar": { "Hürriyet": "https://www.google.com/search?q=H%C3%BCrriyet+%C3%87orlu+ION+Reklam+yang%C4%B1n", "Çorlu Ticaret ve Sanayi Odası": "#" } },
+    { "id": 7, "tarih": "07.07.2025", "il": "Aksaray", "ilce": "Merkez", "konum": "Aksaray OSB", "tesisAdi": "Fentes Isı Sistemleri", "sektor": "Isı Sistemleri", "olayTuru": "Kazan/Boiler Patlağı", "etkiSeviyesi": "Düşük", "dogrulamaYontemi": "A", "dogrulukOrani": 98, "lat": 38.3733, "lng": 34.0333, "ozet": "Termosifon üretim tesisinin test bölümündeki bir boyler, basınç testi sırasında patladı. Patlama sonucu maddi hasar oluştu.", "etki": "Test ünitesinde ciddi hasar meydana gelmiştir. İki çalışanın hafif yaralanması, İşveren Sorumluluk hasarını tetikler. Üretimde kısa süreli aksama beklenmektedir. Test prosedürlerinin ve ekipmanlarının gözden geçirilmesi gerekmektedir.", "haberler": ["AA: 'Fabrikadaki patlama sesi paniğe neden oldu.'"], "kaynaklar": { "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Aksaray+Fentes+patlama", "Aksaray OSB Yönetimi": "#" } },
+    { "id": 6, "tarih": "02.07.2025", "il": "Burdur", "ilce": "Bucak", "konum": "Oğuzhan Sanayi Sitesi", "tesisAdi": "Atık Ayrıştırma Tesisi", "sektor": "Geri Dönüşüm / Depo", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 85, "lat": 37.4583, "lng": 30.5936, "ozet": "Sanayi sitesindeki atık depolama alanında bilinmeyen bir nedenle yangın çıktı. Çevreye yayılan koku nedeniyle vatandaşlar rahatsız oldu.", "etki": "Depolanan atıkların büyük bir kısmı yanmıştır. Maddi hasar orta seviyededir. Çevre kirliliği ve halk sağlığı şikayetleri nedeniyle idari yaptırım ve Çevre Kirliliği Sorumluluk hasarı riski bulunmaktadır.", "haberler": ["Çağdaş Burdur: 'Sanayi sitesinde korkutan yangın.'"], "kaynaklar": { "Çağdaş Burdur": "https://www.google.com/search?q=%C3%87a%C4%9Fda%C5%9F+Burdur+Bucak+sanayi+yang%C4%B1n", "Bucak Belediyesi": "#" } },
+    { "id": 5, "tarih": "30.06.2025", "il": "Eskişehir", "ilce": "Odunpazarı", "konum": "Eskişehir OSB", "tesisAdi": "Korel Elektronik", "sektor": "Beyaz Eşya Parçaları", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 95, "lat": 39.7397, "lng": 30.5835, "ozet": "Beyaz eşya yan sanayi ürünleri üreten fabrikanın enjeksiyon bölümünde bir makinenin aşırı ısınması sonucu yangın çıktı.", "etki": "Enjeksiyon bölümü ve birkaç makine kullanılamaz hale gelmiştir. Ana sanayi firmalarına parça tedariğinde yaşanacak aksamalar nedeniyle Tedarik Zinciri İş Durması tazminat talepleri riski bulunmaktadır. Makine Kırılması poliçesi de devreye girecektir.", "haberler": ["Oxu.az: 'Fabrika yönetimi hasar tespiti için çalışma başlattı.'"], "kaynaklar": { "Yabancı Basın": "#", "Eskişehir OSB": "#", "Şirket Açıklaması": "#" } },
+    { "id": 4, "tarih": "30.06.2025", "il": "Ankara", "ilce": "Sincan", "konum": "Sincan Sanayi Sitesi", "tesisAdi": "Atık Kağıt Geri Dönüşüm Tesisi", "sektor": "Geri Dönüşüm / Kağıt", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 90, "lat": 39.9778, "lng": 32.5833, "ozet": "Preslenmiş atık kağıt balyalarının tutuşmasıyla başlayan yangın, rüzgarın da etkisiyle hızla büyüdü. Söndürme çalışmalarına TOMA'lar da destek verdi.", "etki": "Tesisin açık depolama sahası ve işleme ünitesinin bir kısmı yanmıştır. Hammadde (emtea) kaybı yüksektir. Söndürme çalışmaları için büyük miktarda su kullanılması, civardaki altyapıya da ek maliyetler getirmiş olabilir.", "haberler": ["Etik Haber: 'Sincan semaları siyaha büründü.'", "AA: 'Yangına TOMA'lar da destek verdi.'"], "kaynaklar": { "Yerel Basın": "https://www.google.com/search?q=Etik+Haber+Sincan+yang%C4%B1n", "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Sincan+TOMA+yang%C4%B1n" } },
+    { "id": 3, "tarih": "27.06.2025", "il": "Batman", "ilce": "Merkez", "konum": "Batman OSB", "tesisAdi": "Fernas Gıda (Lavi)", "sektor": "Gıda / Meyve Suyu", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 37.9493, "lng": 41.1738, "ozet": "Meyve suyu fabrikasının ambalajlama bölümünde çıkan yangın, üretim bandına da sıçradı. Soğutma çalışmaları saatler sürdü.", "etki": "Üretim ve paketleme hattında ciddi hasar oluşmuştur. Yaz sezonu sevkiyatlarında aksama yaşanacaktır. Bozulabilir ürünler (meyve konsantreleri) için soğuk hava depolarının etkilenip etkilenmediği ve ürün bozulması (Gıda Bozulması teminatı) olup olmadığı incelenmelidir.", "haberler": ["Batman Valiliği (X): 'Yangın kontrol altına alındı.'", "Batman Sonsöz: 'Fabrikada büyük çapta hasar meydana geldi.'"], "kaynaklar": { "Batman Valiliği": "#", "Yerel Basın": "https://www.google.com/search?q=Batman+Sons%C3%B6z+Fernas+G%C4%B1da+yang%C4%B1n", "Batman OSB": "#" } },
+    { "id": 2, "tarih": "26.06.2025", "il": "Aydın", "ilce": "Efeler", "konum": "Çeştepe Mah.", "tesisAdi": "Şahane Group İnşaat Deposu", "sektor": "İnşaat Malzemeleri", "olayTuru": "Yangın", "etkiSeviyesi": "Orta", "dogrulamaYontemi": "B", "dogrulukOrani": 80, "lat": 37.8464, "lng": 27.8467, "ozet": "İnşaat malzemeleri deposunda, özellikle yalıtım ve plastik ürünlerin bulunduğu bölümde elektrik kontağından çıktığı tahmin edilen yangın meydana geldi.", "etki": "Orta düzeyde maddi hasar. Depodaki stokların (emtea) önemli bir kısmı zarar görmüştür. Yanıcı ve toksik duman çıkaran malzemeler nedeniyle söndürme çalışmaları zorlaşmış, bu da hasarın büyümesine neden olmuştur.", "haberler": ["Aydın Denge: 'Depodaki yanıcı maddeler itfaiyenin işini zorlaştırdı.'"], "kaynaklar": { "Aydın Denge": "https://www.google.com/search?q=Ayd%C4%B1n+Denge+in%C5%9Faat+deposu+yang%C4%B1n", "Aydın İtfaiyesi": "#" } },
+    { "id": 1, "tarih": "26.06.2025", "il": "Bursa", "ilce": "Mustafakemalpaşa", "konum": "Orta Mah.", "tesisAdi": "Batim Kimya", "sektor": "Plastik / Geri Dönüşüm", "olayTuru": "Yangın", "etkiSeviyesi": "Yüksek", "dogrulamaYontemi": "A", "dogrulukOrani": 100, "lat": 40.0386, "lng": 28.7752, "ozet": "Geri dönüşüm materyallerinin depolandığı alanda başlayan yangın, kimyasal reaksiyon şüphesiyle hızla büyüyerek tüm tesisi sardı.", "etki": "Total hasar. Tesisin tamamen yeniden inşası gerekebilir. 6-9 ay arasında öngörülen uzun süreli iş durması ve buna bağlı ciddi kar kaybı beklenmektedir. Çevreye yayılan toksik duman nedeniyle Çevre Kirliliği Sorumluluk poliçesi tetiklenebilir.", "haberler": ["AA: 'Yoğun siyah duman gökyüzünü kapladı.'", "GZT: 'Fabrika tamamen kullanılamaz hale geldi.'"], "kaynaklar": { "Bursa Valiliği": "#", "Anadolu Ajansı": "https://www.google.com/search?q=Anadolu+Ajans%C4%B1+Bursa+Batim+Kimya+yang%C4%B1n", "Çevre ve Şehircilik İl Müdürlüğü": "#" } }
 ]
 
-# HTML içeriği
-html_content = """
+# HTML içeriği - Bu kısım, JavaScript'in veriyi Python'dan almasını sağlar.
+html_content = f"""
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -29,390 +86,243 @@ html_content = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yapay Zeka Destekli Hasar Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
-        body {
+        body {{
             font-family: 'Inter', sans-serif;
             background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-        }
-        .main-grid {
+            overflow: hidden;
+        }}
+        .main-grid {{
             display: grid;
             grid-template-columns: 380px 1fr;
-            height: calc(100vh - 200px);
+            grid-template-rows: 1fr;
+            height: calc(100vh - 120px);
             gap: 1rem;
-            padding: 1rem;
-        }
-        #incident-list-container {
-            background: white;
-            border-radius: 0.5rem;
-            padding: 1rem;
+        }}
+        #incident-list-container, #main-content-area {{
             overflow-y: auto;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .incident-item {
-            padding: 0.75rem;
-            border-left: 4px solid;
-            background: white;
-            margin-bottom: 0.5rem;
-            border-radius: 0 0.375rem 0.375rem 0;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .incident-item:hover {
+            height: 100%;
+        }}
+        .active-item {{
             background-color: #eef2ff;
-            transform: translateX(-2px);
-        }
-        .active-item {
-            background-color: #eef2ff !important;
-            border-left-color: #4f46e5 !important;
-        }
-        #map {
-            height: 450px;
+            border-left-color: #4f46e5;
+            transform: translateX(-4px);
+        }}
+        #map {{
+            height: 100%;
             width: 100%;
             border-radius: 0.75rem;
-        }
-        .chart-container {
+            z-index: 10;
+        }}
+        .leaflet-div-icon {{
+            background: transparent;
+            border: none;
+        }}
+        .spinner {{
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #4f46e5;
+            animation: spin 1s ease infinite;
+        }}
+        @keyframes spin {{ 0% {{ transform: rotate(0deg); }} 100% {{ transform: rotate(360deg); }} }}
+        ::-webkit-scrollbar {{ width: 8px; }}
+        ::-webkit-scrollbar-track {{ background: #f1f1f1; }}
+        ::-webkit-scrollbar-thumb {{ background: #c5c5c5; border-radius: 4px; }}
+        ::-webkit-scrollbar-thumb:hover {{ background: #a3a3a3; }}
+        .chart-container {{
+            position: relative;
             height: 350px;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
+            width: 100%;
+        }}
     </style>
 </head>
-<body>
-    <div class="bg-white shadow-sm p-4 mb-4">
-        <div class="max-w-screen-2xl mx-auto flex items-center gap-3">
-            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800">Yapay Zeka Destekli Hasar Paneli</h1>
-                <p class="text-sm text-gray-500">Türkiye: Son 3 Aylık Endüstriyel & Enerji Hasarları Analizi</p>
+<body class="text-gray-800">
+    <div class="flex flex-col h-screen">
+        <header class="bg-white shadow-sm w-full p-4 z-20 flex-shrink-0">
+            <div class="max-w-screen-2xl mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                      <svg class="w-8 h-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                      </svg>
+                      <div>
+                          <h1 class="text-2xl font-bold text-gray-800">Yapay Zeka Destekli Hasar Paneli</h1>
+                          <p class="text-sm text-gray-500">Türkiye: Son 3 Aylık Endüstriyel & Enerji Hasarları Analizi</p>
+                      </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="bg-white/80 backdrop-blur-sm w-full p-3 shadow-md z-10 flex-shrink-0">
+            <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row gap-2 items-center">
+                 <p class="font-semibold text-gray-600 mr-2">Filtreler:</p>
+                <select id="il-filter" class="w-full md:w-auto p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"><option value="all">Tüm İller</option></select>
+                <select id="sektor-filter" class="w-full md:w-auto p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"><option value="all">Tüm Sektörler</option></select>
+                <select id="olay-filter" class="w-full md:w-auto p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"><option value="all">Tüm Olay Türleri</option></select>
+                <select id="etki-filter" class="w-full md:w-auto p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"><option value="all">Tüm Etki Seviyeleri</option><option value="Yüksek">Yüksek</option><option value="Orta">Orta</option><option value="Düşük">Düşük</option></select>
+                <button id="reset-filters" class="w-full md:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md text-sm transition duration-150">Filtreleri Temizle</button>
+                <div id="result-count" class="ml-auto text-sm font-medium text-gray-600 pr-2"></div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white/80 backdrop-blur-sm p-3 shadow-md mb-4">
-        <div class="max-w-screen-2xl mx-auto flex items-center gap-2">
-            <span class="font-semibold text-gray-600">Filtreler:</span>
-            <select id="il-filter" class="p-2 border rounded-md text-sm">
-                <option value="all">Tüm İller</option>
-            </select>
-            <select id="sektor-filter" class="p-2 border rounded-md text-sm">
-                <option value="all">Tüm Sektörler</option>
-            </select>
-            <select id="olay-filter" class="p-2 border rounded-md text-sm">
-                <option value="all">Tüm Olay Türleri</option>
-            </select>
-            <select id="etki-filter" class="p-2 border rounded-md text-sm">
-                <option value="all">Tüm Etki Seviyeleri</option>
-                <option value="Yüksek">Yüksek</option>
-                <option value="Orta">Orta</option>
-                <option value="Düşük">Düşük</option>
-            </select>
-            <button id="reset-filters" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md text-sm">
-                Filtreleri Temizle
-            </button>
-            <div id="result-count" class="ml-auto text-sm font-medium text-gray-600"></div>
-        </div>
-    </div>
+        <main class="max-w-screen-2xl mx-auto w-full p-4 flex-grow">
+            <div class="main-grid">
+                <aside id="incident-list-container" class="bg-white p-2 rounded-lg shadow-sm">
+                    <h2 class="text-lg font-bold mb-3 p-2 border-b">Hasar Listesi (En Yeni)</h2>
+                    <div id="incident-list" class="space-y-1"></div>
+                </aside>
 
-    <div class="main-grid">
-        <aside id="incident-list-container">
-            <h2 class="text-lg font-bold mb-3 pb-2 border-b">📋 Hasar Listesi (En Yeni)</h2>
-            <div id="incident-list"></div>
-        </aside>
-
-        <div id="main-content-area">
-            <div id="details-panel" class="hidden bg-white p-6 rounded-lg shadow-lg"></div>
-            <div id="analysis-panel">
-                <div class="bg-white rounded-lg shadow-lg p-4 mb-4">
-                    <h3 class="font-bold text-gray-700 text-lg mb-2">🗺️ Hasar Konumları Haritası</h3>
-                    <div id="map"></div>
-                </div>
-                <div class="grid grid-cols-4 gap-4 mb-4" id="metric-cards"></div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white rounded-lg shadow-lg p-4">
-                        <h3 class="font-semibold text-center mb-2 text-gray-600">Sektörlere Göre Hasar</h3>
-                        <div class="chart-container">
-                            <canvas id="sektorChart"></canvas>
+                <div id="main-content-area">
+                    <div id="details-panel" class="hidden bg-white p-6 rounded-lg shadow-lg"></div>
+                    <div id="analysis-panel" class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        <div class="xl:col-span-2 h-[450px] bg-white rounded-lg shadow-lg p-4">
+                             <h3 class="font-bold text-gray-700 text-lg mb-2">Hasar Konumları Haritası</h3>
+                             <div id="map-container" class="w-full h-[calc(100%-40px)]"><div id="map"></div></div>
                         </div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-lg p-4">
-                        <h3 class="font-semibold text-center mb-2 text-gray-600">Etki Seviyesi Dağılımı</h3>
-                        <div class="chart-container">
-                            <canvas id="etkiChart"></canvas>
+                        <div class="xl:col-span-2 bg-white rounded-lg shadow-lg p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="font-bold text-gray-700 text-lg">Öne Çıkan Analizler</h3>
+                            </div>
+                            <div id="analysis-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-lg p-4">
+                            <h3 class="font-semibold text-center mb-2 text-gray-600">Sektörlere Göre Hasar Sayısı (Top 10)</h3>
+                            <div class="chart-container">
+                                <canvas id="sektorChart"></canvas>
+                            </div>
+                        </div>
+                         <div class="bg-white rounded-lg shadow-lg p-4">
+                            <h3 class="font-semibold text-center mb-2 text-gray-600">Aylara Göre Hasar Dağılımı</h3>
+                            <div class="chart-container">
+                                <canvas id="aylikChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <script>
-        const incidentsData = """ + json.dumps(incidents_data) + """;
-        let map, currentFilteredData = incidentsData;
-        let currentIncident = null;
-        
-        function init() {
-            populateFilters();
-            initMap();
-            renderAll(incidentsData);
-            addEventListeners();
-        }
+        document.addEventListener('DOMContentLoaded', function () {{
+            
+            const incidentsData = {json.dumps(incidents_data, ensure_ascii=False)};
 
-        function populateFilters() {
-            const iller = [...new Set(incidentsData.map(item => item.il))].sort();
-            const sektorler = [...new Set(incidentsData.map(item => item.sektor.split(' / ')[0]))].sort();
-            const olaylar = [...new Set(incidentsData.map(item => item.olayTuru))].sort();
-            
-            iller.forEach(il => {
-                document.getElementById('il-filter').innerHTML += `<option value="${il}">${il}</option>`;
-            });
-            sektorler.forEach(sektor => {
-                document.getElementById('sektor-filter').innerHTML += `<option value="${sektor}">${sektor}</option>`;
-            });
-            olaylar.forEach(olay => {
-                document.getElementById('olay-filter').innerHTML += `<option value="${olay}">${olay}</option>`;
-            });
-        }
+            let map, markersLayer, polylinesLayer, sektorChart, aylikChart;
+            let currentIncident = null;
+            let currentFilteredData = incidentsData;
+            const elements = {{ ilFilter: document.getElementById('il-filter'), sektorFilter: document.getElementById('sektor-filter'), olayFilter: document.getElementById('olay-filter'), etkiFilter: document.getElementById('etki-filter'), incidentList: document.getElementById('incident-list'), resultCount: document.getElementById('result-count'), resetBtn: document.getElementById('reset-filters'), detailsPanel: document.getElementById('details-panel'), analysisPanel: document.getElementById('analysis-panel'), mainContentArea: document.getElementById('main-content-area'), mapContainer: document.getElementById('map-container'), analysisCards: document.getElementById('analysis-cards') }};
 
-        function renderIncidentList(data) {
-            const listEl = document.getElementById('incident-list');
-            listEl.innerHTML = '';
-            
-            if (data.length === 0) {
-                listEl.innerHTML = '<p class="text-gray-500 text-center p-4">Sonuç bulunamadı.</p>';
-                return;
-            }
-            
-            data.forEach(item => {
-                const colors = {
-                    'Yüksek': 'border-red-500',
-                    'Orta': 'border-yellow-500',
-                    'Düşük': 'border-green-500'
-                };
-                const borderColor = colors[item.etkiSeviyesi] || 'border-gray-300';
+            function init() {{ populateFilters(); initMap(); renderAll(incidentsData); addEventListeners(); }}
+
+            function addEventListeners() {{
+                elements.ilFilter.addEventListener('change', applyFilters);
+                elements.sektorFilter.addEventListener('change', applyFilters);
+                elements.olayFilter.addEventListener('change', applyFilters);
+                elements.etkiFilter.addEventListener('change', applyFilters);
+                elements.resetBtn.addEventListener('click', resetAllFilters);
+                elements.incidentList.addEventListener('click', handleListClick);
+            }}
+
+            function renderAll(data) {{ renderIncidentList(data); updateAnalysis(data); updateMapMarkers(data); }}
+
+            function populateFilters() {{
+                const iller = [...new Set(incidentsData.map(item => item.il))].sort((a, b) => a.localeCompare(b, 'tr'));
+                const sektorler = [...new Set(incidentsData.map(item => item.sektor.split(' / ')[0].trim()))].sort();
+                const olaylar = [...new Set(incidentsData.map(item => item.olayTuru))].sort();
+                iller.forEach(il => elements.ilFilter.innerHTML += `<option value="${{il}}">${{il}}</option>`);
+                sektorler.forEach(sektor => elements.sektorFilter.innerHTML += `<option value="${{sektor}}">${{sektor}}</option>`);
+                olaylar.forEach(olay => elements.olayFilter.innerHTML += `<option value="${{olay}}">${{olay}}</option>`);
+            }}
+
+            function renderIncidentList(data) {{
+                elements.incidentList.innerHTML = data.length === 0 ? '<p class="text-gray-500 text-center p-4">Filtre kriterlerine uygun sonuç bulunamadı.</p>' : '';
+                if(data.length > 0) {{
+                    data.forEach(item => {{
+                        const etkiRenk = {{ 'Yüksek': 'border-red-500', 'Orta': 'border-yellow-500', 'Düşük': 'border-green-500' }}[item.etkiSeviyesi] || 'border-gray-200';
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = `p-3 border-l-4 ${{etkiRenk}} cursor-pointer hover:bg-gray-100 transition duration-150 rounded-r-md`;
+                        itemDiv.dataset.id = item.id;
+                        itemDiv.innerHTML = `<div class="flex justify-between items-start"><p class="font-bold text-base text-gray-800">${{item.tesisAdi}}</p><span class="text-xs font-medium text-gray-500">${{item.tarih}}</span></div><p class="text-sm text-gray-600">${{item.il}}, ${{item.ilce}}</p><p class="text-xs text-gray-500 mt-1">${{item.olayTuru}}</p>`;
+                        elements.incidentList.appendChild(itemDiv);
+                    }});
+                }}
+                elements.resultCount.textContent = `${{data.length}} sonuç bulundu.`;
+            }}
+
+            function showDetails(incident) {{
+                elements.analysisPanel.classList.add('hidden');
+                elements.mapContainer.classList.add('hidden');
+                const etkiBilgi = {{ 'Yüksek': {{ renk: 'red', ikon: 'fa-triangle-exclamation', metin: 'Yüksek Etki' }}, 'Orta': {{ renk: 'yellow', ikon: 'fa-circle-exclamation', metin: 'Orta Etki' }}, 'Düşük': {{ renk: 'green', ikon: 'fa-circle-info', metin: 'Düşük Etki' }} }}[incident.etkiSeviyesi];
+                const dogrulamaText = incident.dogrulamaYontemi === 'A' ? 'Resmi kaynak/şirket açıklaması.' : 'Basın/harita servisleri.';
+                let etkilenenTesisHTML = incident.etkilenenTesis ? `<div class="mt-4"><h4 class="font-bold text-red-700 flex items-center gap-2"><i class="fa-solid fa-link"></i> Teyitli Etkilenen Komşu Tesis</h4><p class="text-sm bg-red-50 p-3 rounded-lg mt-1 border border-red-200">${{incident.etkilenenTesis.ad}}</p></div>` : '';
+                let potansiyelEtkilenenlerHTML = incident.potansiyelEtkilenenler ? `<div class="mt-4"><h4 class="font-bold text-sky-700 flex items-center gap-2"><i class="fa-solid fa-magnifying-glass-location"></i> Potansiyel Riskli Komşu Tesisler</h4><ul class="text-sm bg-sky-50 p-3 rounded-lg mt-1 border border-sky-200 space-y-1">${{incident.potansiyelEtkilenenler.map(p => `<li><strong>${{p.ad}}</strong> (${{p.sektor}})</li>`).join('')}}</ul></div>` : '';
+                let kaynaklarHTML = incident.kaynaklar ? `<div class="mt-4"><h4 class="font-bold text-gray-700">Bilgi Kaynakları</h4><div class="flex flex-wrap gap-2 mt-2">${{Object.entries(incident.kaynaklar).map(([kaynak, link]) => `<a href="${{link}}" target="_blank" class="bg-gray-200 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full hover:bg-indigo-100 hover:text-indigo-800 transition">${{kaynak}}</a>`).join('')}}</div></div>` : '';
+                elements.detailsPanel.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="md:col-span-2"><div class="flex justify-between items-start relative"><button onclick="resetToAnalysisView()" class="absolute top-0 right-0 text-gray-500 hover:text-gray-800 font-bold p-2 text-2xl z-10">&times;</button><div><span class="inline-block px-3 py-1 text-sm font-semibold text-${{etkiBilgi.renk}}-800 bg-${{etkiBilgi.renk}}-100 rounded-full mb-2"><i class="fa-solid ${{etkiBilgi.ikon}} mr-2"></i>${{etkiBilgi.metin}}</span><h2 class="text-3xl font-bold text-gray-800">${{incident.tesisAdi}}</h2><p class="text-md text-gray-500 mt-1">${{incident.konum}}, ${{incident.ilce}}/${{incident.il}}</p></div></div><div class="grid grid-cols-2 gap-4 text-sm mt-6"><div class="bg-gray-50 p-3 rounded-lg"><p class="font-semibold text-gray-500">Tarih</p><p class="font-medium text-lg">${{incident.tarih}}</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="font-semibold text-gray-500">Olay Türü</p><p class="font-medium text-lg">${{incident.olayTuru}}</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="font-semibold text-gray-500">Sektör</p><p class="font-medium text-lg">${{incident.sektor}}</p></div><div class="bg-gray-50 p-3 rounded-lg"><p class="font-semibold text-gray-500">Doğruluk Oranı (%${{incident.dogrulukOrani}})</p><div class="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${{incident.dogrulukOrani}}%"></div></div><p class="text-xs text-right mt-1">${{dogrulamaText}}</p></div></div><div class="mt-4"><h4 class="font-bold text-gray-700">Olay Özeti</h4><p class="text-sm mt-1 bg-blue-50 p-3 rounded-lg border border-blue-200">${{incident.ozet}}</p></div><div class="mt-4"><h4 class="font-bold text-gray-700">Direkt Hasar Etkisi</h4><p class="text-sm mt-1">${{incident.etki}}</p></div>${{etkilenenTesisHTML}} ${{potansiyelEtkilenenlerHTML}}<div class="mt-4"><h4 class="font-bold text-gray-700">Haber Alıntıları</h4><ul class="list-disc list-inside text-sm space-y-1 pl-1 mt-1">${{incident.haberler.map(h => `<li>${{h}}</li>`).join('')}}</ul></div>${{kaynaklarHTML}}</div><div class="md:col-span-1 h-full min-h-[400px]"><div id="detail-map" class="w-full h-full rounded-lg shadow-md"></div></div></div>`;
+                elements.detailsPanel.classList.remove('hidden');
                 
-                const itemDiv = document.createElement('div');
-                itemDiv.className = `incident-item ${borderColor}`;
-                itemDiv.dataset.id = item.id;
-                itemDiv.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div class="font-bold text-gray-800">${item.tesisAdi}</div>
-                        <div class="text-xs text-gray-500">${item.tarih}</div>
-                    </div>
-                    <div class="text-sm text-gray-600 mt-1">${item.il}, ${item.ilce}</div>
-                    <div class="text-xs text-gray-500 mt-1">${item.olayTuru}</div>
-                `;
-                itemDiv.onclick = () => showDetails(item);
-                listEl.appendChild(itemDiv);
-            });
-            
-            document.getElementById('result-count').textContent = `${data.length} sonuç bulundu`;
-        }
+                const detailMap = L.map('detail-map').setView([incident.lat, incident.lng], 15);
+                L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png').addTo(detailMap);
+                L.marker([incident.lat, incident.lng], {{ icon: createMapIcon(incident) }}).addTo(detailMap).bindPopup(`<b>${{incident.tesisAdi}}</b>`).openPopup();
+                if (incident.etkilenenTesis) {{ L.marker([incident.etkilenenTesis.lat, incident.etkilenenTesis.lng], {{ icon: createMapIcon({{ olayTuru: 'Etkilenen', etkiSeviyesi: 'Yüksek' }}) }}).addTo(detailMap).bindPopup(`<b>Etkilenen:</b> ${{incident.etkilenenTesis.ad}}`); L.polyline([[incident.lat, incident.lng], [incident.etkilenenTesis.lat, incident.etkilenenTesis.lng]], {{ color: 'red', dashArray: '5, 10' }}).addTo(detailMap); }}
+                if (incident.potansiyelEtkilenenler) {{ incident.potansiyelEtkilenenler.forEach(p => {{ L.marker([p.lat, p.lng], {{ icon: createMapIcon({{ olayTuru: 'Potansiyel', etkiSeviyesi: 'Potansiyel' }}) }}).addTo(detailMap).bindPopup(`<b>Potansiyel Risk:</b><br>${{p.ad}}`); L.polyline([[incident.lat, incident.lng], [p.lat, p.lng]], {{ color: '#0ea5e9', dashArray: '1, 5' }}).addTo(detailMap); }}); }}
+            }}
 
-        function showDetails(incident) {
-            currentIncident = incident;
-            document.querySelectorAll('.incident-item').forEach(el => el.classList.remove('active-item'));
-            document.querySelector(`[data-id="${incident.id}"]`).classList.add('active-item');
+            function updateAnalysis(data) {{
+                const totalIncidents = data.length; const highImpactCount = data.filter(i => i.etkiSeviyesi === 'Yüksek').length; const mostFrequentIncident = Object.entries(countBy(data, 'olayTuru')).sort((a, b) => b[1] - a[1])[0] || ['-', 0]; const mostAffectedSector = Object.entries(countBy(data, 'sektor')).sort((a, b) => b[1] - a[1])[0] || ['-', 0];
+                elements.analysisCards.innerHTML = `<div class="bg-blue-50 p-4 rounded-lg border border-blue-200"><p class="text-sm text-blue-700 font-semibold">Toplam Vaka</p><p class="text-3xl font-bold text-blue-900">${{totalIncidents}}</p></div><div class="bg-red-50 p-4 rounded-lg border border-red-200"><p class="text-sm text-red-700 font-semibold">Yüksek Etkili Vaka</p><p class="text-3xl font-bold text-red-900">${{highImpactCount}}</p></div><div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200"><p class="text-sm text-yellow-700 font-semibold">En Sık Olay Türü</p><p class="text-xl font-bold text-yellow-900">${{mostFrequentIncident[0]}}</p></div><div class="bg-green-50 p-4 rounded-lg border border-green-200"><p class="text-sm text-green-700 font-semibold">En Riskli Sektör</p><p class="text-xl font-bold text-green-900">${{mostAffectedSector[0]}}</p></div>`;
+                updateCharts(data);
+            }}
             
-            const detailsPanel = document.getElementById('details-panel');
-            const analysisPanel = document.getElementById('analysis-panel');
-            
-            detailsPanel.innerHTML = `
-                <button onclick="closeDetails()" class="float-right text-2xl text-gray-500 hover:text-gray-800">&times;</button>
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">${incident.tesisAdi}</h2>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="bg-gray-50 p-3 rounded">
-                        <div class="text-sm text-gray-500">Tarih</div>
-                        <div class="font-semibold">${incident.tarih}</div>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded">
-                        <div class="text-sm text-gray-500">Olay Türü</div>
-                        <div class="font-semibold">${incident.olayTuru}</div>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded">
-                        <div class="text-sm text-gray-500">Sektör</div>
-                        <div class="font-semibold">${incident.sektor}</div>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded">
-                        <div class="text-sm text-gray-500">Doğruluk Oranı</div>
-                        <div class="font-semibold">%${incident.dogrulukOrani}</div>
-                    </div>
-                </div>
-                <div class="bg-blue-50 p-4 rounded mb-4">
-                    <h4 class="font-semibold text-blue-900 mb-2">Olay Özeti</h4>
-                    <p class="text-sm">${incident.ozet}</p>
-                </div>
-                <div class="mb-4">
-                    <h4 class="font-semibold text-gray-700 mb-2">Hasar Etkisi</h4>
-                    <p class="text-sm">${incident.etki}</p>
-                </div>
-            `;
-            
-            detailsPanel.classList.remove('hidden');
-            analysisPanel.classList.add('hidden');
-            
-            map.setView([incident.lat, incident.lng], 14);
-        }
+            function applyFilters() {{ const filters = {{ il: elements.ilFilter.value, sektor: elements.sektorFilter.value, olay: elements.olayFilter.value, etki: elements.etkiFilter.value, }}; currentFilteredData = incidentsData.filter(item => (filters.il === 'all' || item.il === filters.il) && (filters.sektor === 'all' || item.sektor.startsWith(filters.sektor)) && (filters.olay === 'all' || item.olayTuru === filters.olay) && (filters.etki === 'all' || item.etkiSeviyesi === filters.etki)); renderAll(currentFilteredData); resetToAnalysisView(); }}
+            function resetAllFilters() {{ elements.ilFilter.value = 'all'; elements.sektorFilter.value = 'all'; elements.olayFilter.value = 'all'; elements.etkiFilter.value = 'all'; applyFilters(); map.setView([39.0, 35.0], 6); }}
+            window.resetToAnalysisView = function() {{ elements.detailsPanel.classList.add('hidden'); elements.analysisPanel.classList.remove('hidden'); elements.mapContainer.classList.remove('hidden'); currentIncident = null; document.querySelectorAll('.active-item').forEach(el => el.classList.remove('active-item')); if (map) map.invalidateSize(); }}
 
-        function closeDetails() {
-            document.getElementById('details-panel').classList.add('hidden');
-            document.getElementById('analysis-panel').classList.remove('hidden');
-            document.querySelectorAll('.incident-item').forEach(el => el.classList.remove('active-item'));
-            currentIncident = null;
-            map.setView([39.0, 35.0], 6);
-        }
-
-        function initMap() {
-            map = L.map('map').setView([39.0, 35.0], 6);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-        }
-
-        function updateMapMarkers(data) {
-            map.eachLayer(layer => {
-                if (layer instanceof L.Marker) {
-                    map.removeLayer(layer);
-                }
-            });
+            function handleListClick(e) {{
+                const itemDiv = e.target.closest('[data-id]');
+                if (itemDiv) {{ const incidentId = parseInt(itemDiv.dataset.id); currentIncident = incidentsData.find(i => i.id === incidentId); document.querySelectorAll('.active-item').forEach(el => el.classList.remove('active-item')); itemDiv.classList.add('active-item'); itemDiv.scrollIntoView({{ behavior: 'smooth', block: 'center' }}); showDetails(currentIncident); if (map) map.flyTo([currentIncident.lat, currentIncident.lng], 14); }}
+            }}
             
-            data.forEach(item => {
-                const colors = {
-                    'Yüksek': 'red',
-                    'Orta': 'orange',
-                    'Düşük': 'green'
-                };
-                const color = colors[item.etkiSeviyesi] || 'gray';
-                
-                const icon = L.divIcon({
-                    html: `<div style="color: ${color}; font-size: 20px;"><i class="fa fa-fire"></i></div>`,
-                    className: 'custom-div-icon',
-                    iconSize: [30, 30]
-                });
-                
-                L.marker([item.lat, item.lng], {icon: icon})
-                    .bindPopup(`<b>${item.tesisAdi}</b><br>${item.olayTuru}`)
-                    .addTo(map);
-            });
-        }
+            function initMap() {{ map = L.map('map').setView([39.0, 35.0], 6); L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{ attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' }}).addTo(map); markersLayer = L.layerGroup().addTo(map); polylinesLayer = L.layerGroup().addTo(map); }}
+            function createMapIcon(incident) {{ const icons = {{ 'Yangın': 'fa-fire', 'Patlama': 'fa-bomb', 'Kazan/Boiler': 'fa-temperature-three-quarters', 'Kimyasal': 'fa-flask-vial', 'Çökme': 'fa-house-crack', 'Kran': 'fa-helmet-safety', 'Etkilenen': 'fa-link', 'Potansiyel': 'fa-magnifying-glass' }}; const colors = {{ 'Yüksek': '#ef4444', 'Orta': '#f59e0b', 'Düşük': '#22c55e', 'Etkilenen': '#6b7280', 'Potansiyel': '#0ea5e9' }}; const iconClass = icons[incident.olayTuru.split(' ')[0].replace(/,/g, '')] || 'fa-circle-question'; const color = colors[incident.etkiSeviyesi] || '#6b7280'; return L.divIcon({{ html: `<div style="font-size: 20px; color: ${{color}}; text-shadow: 0 0 3px white;"><i class="fa-solid ${{iconClass}}"></i></div>`, className: 'leaflet-div-icon', iconSize: [24, 24], iconAnchor: [12, 12] }}); }}
 
-        function updateCharts(data) {
-            // Metrik kartları
-            const metricsHtml = `
-                <div class="bg-blue-50 p-4 rounded-lg text-center">
-                    <div class="text-3xl font-bold text-blue-900">${data.length}</div>
-                    <div class="text-sm text-blue-700">Toplam Vaka</div>
-                </div>
-                <div class="bg-red-50 p-4 rounded-lg text-center">
-                    <div class="text-3xl font-bold text-red-900">${data.filter(d => d.etkiSeviyesi === 'Yüksek').length}</div>
-                    <div class="text-sm text-red-700">Yüksek Etkili</div>
-                </div>
-                <div class="bg-yellow-50 p-4 rounded-lg text-center">
-                    <div class="text-3xl font-bold text-yellow-900">${data.filter(d => d.etkiSeviyesi === 'Orta').length}</div>
-                    <div class="text-sm text-yellow-700">Orta Etkili</div>
-                </div>
-                <div class="bg-green-50 p-4 rounded-lg text-center">
-                    <div class="text-3xl font-bold text-green-900">${data.filter(d => d.etkiSeviyesi === 'Düşük').length}</div>
-                    <div class="text-sm text-green-700">Düşük Etkili</div>
-                </div>
-            `;
-            document.getElementById('metric-cards').innerHTML = metricsHtml;
-            
-            // Sektör grafiği
-            const sektorCounts = {};
-            data.forEach(item => {
-                const sektor = item.sektor.split(' / ')[0];
-                sektorCounts[sektor] = (sektorCounts[sektor] || 0) + 1;
-            });
-            
-            const ctx1 = document.getElementById('sektorChart').getContext('2d');
-            new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(sektorCounts),
-                    datasets: [{
-                        data: Object.values(sektorCounts),
-                        backgroundColor: '#6366f1'
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    plugins: { legend: { display: false } }
-                }
-            });
-            
-            // Etki seviyesi grafiği
-            const etkiCounts = {
-                'Yüksek': data.filter(d => d.etkiSeviyesi === 'Yüksek').length,
-                'Orta': data.filter(d => d.etkiSeviyesi === 'Orta').length,
-                'Düşük': data.filter(d => d.etkiSeviyesi === 'Düşük').length
-            };
-            
-            const ctx2 = document.getElementById('etkiChart').getContext('2d');
-            new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(etkiCounts),
-                    datasets: [{
-                        data: Object.values(etkiCounts),
-                        backgroundColor: ['#ef4444', '#f59e0b', '#22c55e']
-                    }]
-                }
-            });
-        }
+            function updateMapMarkers(data) {{
+                markersLayer.clearLayers(); polylinesLayer.clearLayers();
+                data.forEach(item => {{
+                    const marker = L.marker([item.lat, item.lng], {{ icon: createMapIcon(item) }}).addTo(markersLayer);
+                    marker.bindPopup(`<b>${{item.tesisAdi}}</b><br>${{item.olayTuru}}`).on('click', () => handleListClick({{ target: document.querySelector(`[data-id="${{item.id}}"]`) }}));
+                    if (item.etkilenenTesis) {{ const affectedMarker = L.marker([item.etkilenenTesis.lat, item.etkilenenTesis.lng], {{ icon: createMapIcon({{ olayTuru: 'Etkilenen', etkiSeviyesi: 'Etkilenen' }}) }}).addTo(markersLayer); affectedMarker.bindPopup(`<b>Etkilenen:</b><br>${{item.etkilenenTesis.ad}}`); L.polyline([[item.lat, item.lng], [item.etkilenenTesis.lat, item.etkilenenTesis.lng]], {{ color: 'red', dashArray: '5, 10' }}).addTo(polylinesLayer); }}
+                }});
+            }}
 
-        function renderAll(data) {
-            renderIncidentList(data);
-            updateMapMarkers(data);
-            updateCharts(data);
-        }
+            function createOrUpdateChart(chartInstance, elementId, type, data, options) {{ if (chartInstance) {{ chartInstance.destroy(); }} const ctx = document.getElementById(elementId).getContext('2d'); return new Chart(ctx, {{ type, data, options }}); }}
+            function updateCharts(data) {{
+                const sektorData = Object.entries(countBy(data, 'sektor')).sort((a,b) => b[1] - a[1]).slice(0, 10);
+                const ctxSektor = document.getElementById('sektorChart').getContext('2d');
+                const gradientSektor = ctxSektor.createLinearGradient(0, 0, 0, 350);
+                gradientSektor.addColorStop(0, 'rgba(79, 70, 229, 0.8)'); gradientSektor.addColorStop(1, 'rgba(129, 140, 248, 0.5)');
+                sektorChart = createOrUpdateChart(sektorChart, 'sektorChart', 'bar', {{ labels: sektorData.map(d => d[0]), datasets: [{{ label: 'Hasar Sayısı', data: sektorData.map(d => d[1]), backgroundColor: gradientSektor, borderRadius: 4 }}] }}, {{ indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ display: false }} }}, scales: {{ x: {{ grid: {{ display: false }} }}, y: {{ grid: {{ display: false }} }} }} }});
 
-        function addEventListeners() {
-            ['il-filter', 'sektor-filter', 'olay-filter', 'etki-filter'].forEach(id => {
-                document.getElementById(id).addEventListener('change', applyFilters);
-            });
-            document.getElementById('reset-filters').addEventListener('click', () => {
-                ['il-filter', 'sektor-filter', 'olay-filter', 'etki-filter'].forEach(id => {
-                    document.getElementById(id).value = 'all';
-                });
-                applyFilters();
-            });
-        }
-
-        function applyFilters() {
-            const filters = {
-                il: document.getElementById('il-filter').value,
-                sektor: document.getElementById('sektor-filter').value,
-                olay: document.getElementById('olay-filter').value,
-                etki: document.getElementById('etki-filter').value
-            };
+                const aylikDataRaw = data.reduce((acc, item) => {{ const month = item.tarih.substring(3, 10); acc[month] = (acc[month] || 0) + 1; return acc; }}, {{}});
+                const sortedAylikData = Object.entries(aylikDataRaw).sort((a, b) => {{ const [m1, y1] = a[0].split('.'); const [m2, y2] = b[0].split('.'); return new Date(y1, m1-1) - new Date(y2, m2-1); }});
+                aylikChart = createOrUpdateChart(aylikChart, 'aylikChart', 'line', {{ labels: sortedAylikData.map(d => d[0]), datasets: [{{ label: 'Hasar Sayısı', data: sortedAylikData.map(d => d[1]), backgroundColor: 'rgba(22, 163, 74, 0.1)', borderColor: '#16a34a', tension: 0.3, fill: true, pointBackgroundColor: '#16a34a' }}] }}, {{ responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ display: false }} }}, scales: {{ x: {{ grid: {{ display: false }} }}, y: {{ grid: {{ display: false }} }} }} }});
+            }}
             
-            currentFilteredData = incidentsData.filter(item => {
-                return (filters.il === 'all' || item.il === filters.il) &&
-                       (filters.sektor === 'all' || item.sektor.startsWith(filters.sektor)) &&
-                       (filters.olay === 'all' || item.olayTuru === filters.olay) &&
-                       (filters.etki === 'all' || item.etkiSeviyesi === filters.etki);
-            });
-            
-            renderAll(currentFilteredData);
-        }
+            function countBy(arr, prop) {{ return arr.reduce((acc, item) => {{ const key = item[prop].split(' / ')[0].trim(); acc[key] = (acc[key] || 0) + 1; return acc; }}, {{}}); }}
 
-        // Başlat
-        init();
+            init();
+        }});
     </script>
 </body>
 </html>
 """
 
-# HTML'i render et
+# Streamlit'te HTML'i render etme
 components.html(html_content, height=900, scrolling=True)
