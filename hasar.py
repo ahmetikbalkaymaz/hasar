@@ -228,37 +228,41 @@ with col_left:
     else:
         for _, row in filtered_df.iterrows():
             impact_colors = {
-                'Yüksek': '#dc3545',
-                'Orta': '#ffc107', 
-                'Düşük': '#28a745'
+                'Yüksek': '🔴',
+                'Orta': '🟡', 
+                'Düşük': '🟢'
             }
-            border_color = impact_colors.get(row['etkiSeviyesi'], '#6c757d')
+            impact_emoji = impact_colors.get(row['etkiSeviyesi'], '⚪')
             
             is_active = st.session_state.selected_id == row['id']
-            active_style = "background-color: #eef2ff; border-left-color: #4f46e5;" if is_active else ""
             
-            # Tıklanabilir kart
-            card_html = f"""
-            <div class="incident-item" style="border-left-color: {border_color}; {active_style}">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                    <strong style="color: #1f2937; font-size: 14px;">{row['tesisAdi']}</strong>
-                    <span style="color: #6b7280; font-size: 12px;">{row['tarih']}</span>
-                </div>
-                <div style="color: #6b7280; font-size: 13px;">
-                    {row['il']}, {row['ilce']}
-                </div>
-                <div style="color: #9ca3af; font-size: 12px; margin-top: 2px;">
-                    {row['olayTuru']}
-                </div>
-            </div>
-            """
-            
-            if st.button(card_html, key=f"card_{row['id']}", help=f"Detayları görmek için tıklayın", use_container_width=True):
-                st.session_state.selected_id = row['id']
-                st.session_state.show_details = True
-                st.rerun()
-            
-            st.markdown(card_html, unsafe_allow_html=True)
+            # Container ile kart oluştur
+            with st.container():
+                col = st.columns([1])
+                with col[0]:
+                    # Basit button ile tıklama
+                    button_label = f"{impact_emoji} **{row['tesisAdi']}**\n{row['il']}, {row['ilce']}\n{row['olayTuru']}"
+                    
+                    if st.button(
+                        button_label,
+                        key=f"card_{row['id']}",
+                        use_container_width=True,
+                        help=f"{row['tarih']} - Detayları görmek için tıklayın"
+                    ):
+                        st.session_state.selected_id = row['id']
+                        st.session_state.show_details = True
+                        st.rerun()
+                    
+                    # Aktif öğeyi vurgula
+                    if is_active:
+                        st.markdown("""
+                        <style>
+                            div[data-testid="stButton"] > button[kind="secondary"] {
+                                background-color: #eef2ff !important;
+                                border-left: 4px solid #4f46e5 !important;
+                            }
+                        </style>
+                        """, unsafe_allow_html=True)
 
 # Sağ panel
 with col_right:
